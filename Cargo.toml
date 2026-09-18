@@ -20,18 +20,16 @@ name = "filebase"
 path = "src/main.rs"
 
 [dependencies]
-# The query engine. This application embeds it rather than growing a second
-# one, which is why it was written first — `~/notes/slipql.md`.
+# The query engine. This application embeds it rather than growing a second one,
+# which is why it was written first — `~/notes/slipql.md`. From crates.io at a
+# published version, as `slpc` and `flyleaf` are: never a path or git dependency
+# in a committed manifest, since crates.io refuses the one and a path builds on
+# one machine.
 #
 # `default-features = false` leaves the command behind: the `cli` feature is
-# clap and rustyline, and a window needs neither.
-#
-# **This is a path dependency and a committed manifest must not carry one.**
-# slipql 0.1.0 is built and its CI is green but it has never been tagged or
-# published, so there is no version to require yet. The moment it is on
-# crates.io this becomes `slipql = { version = "0.1", default-features = false }`
-# and the path goes, and until then this repository builds on one machine.
-slipql = { path = "../slipql", default-features = false }
+# clap and rustyline, and a window needs neither. It also means this crate is
+# the library alone, so nothing here puts a second `slipql` on PATH.
+slipql = { version = "0.1", default-features = false }
 # The container library, for what the detail pane says about a payload. Reached
 # directly rather than through slipql's re-export so that the dependency is
 # visible here, and pinned to the same requirement slipql resolves: two `slpc`

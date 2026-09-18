@@ -2889,6 +2889,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 [[package]]
 name = "slipql"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd1e8f7ce5358640a614fa2f7cf39a27bba9a17d0dafa0c8af57a1297a72dbfe"
 dependencies = [
  "slpc",
  "unicode-width",
