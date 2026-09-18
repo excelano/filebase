@@ -114,7 +114,7 @@ jobs:
         run: |
           set -eu
           cargo install slipcase --quiet
-          ./packaging/demo-corpus.sh --out "${RUNNER_TEMP}/corpus"
+          ./packaging/demo-corpus.sh
 
       # A folder arrives as an argument here, not as an Apple Event: this
       # application declares no document type, so there is nothing for Launch
@@ -126,7 +126,7 @@ jobs:
           set -eu
           swiftc -O packaging/macos/window-probe.swift -o "${RUNNER_TEMP}/window-probe"
 
-          open -a "$PWD/dist/Filebase.app" --args "${RUNNER_TEMP}/corpus"
+          open -a "$PWD/dist/Filebase.app" --args "$PWD/dist/corpus"
 
           # Cold launch, a window server, and a first frame. Polled rather than
           # slept at; 30 seconds is far past anything measured by hand.
@@ -197,4 +197,3 @@ jobs:
           app: dist/Filebase.app
           mode: ${{ inputs.screenshots }}
           languages: en
-          args: --corpus ${{ runner.temp }}/corpus

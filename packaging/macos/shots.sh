@@ -11,7 +11,8 @@
 # It is one file on purpose. Everything a person would change to retake a set
 # lives at the top, and running it by hand is the same command CI runs:
 #
-#     ./packaging/macos/shots.sh --app dist/Filebase.app --corpus /some/folder
+#     ./packaging/demo-corpus.sh
+#     ./packaging/macos/shots.sh --app dist/Filebase.app
 #
 # WHAT THE SET HAS TO SHOW, AND WHY
 #
@@ -61,20 +62,14 @@ AS_ARGS=yes
 
 # The folder to open. Built by `packaging/demo-corpus.sh`, which is committed so
 # that the frames are of a corpus anyone can reproduce rather than of whatever
-# happened to be on one machine. CI builds it and passes it in with --corpus.
+# happened to be on one machine, and which writes here by default. A fixed path
+# rather than an argument, because `take-shots.sh` is generated and refuses an
+# argument it does not know — the same way `DOCUMENT` is a fixed path in the
+# applications that photograph a document.
 CORPUS="${root}/dist/corpus"
 
 # Where the shots land. Not committed: dist is where every built artefact goes.
 OUTDIR="${root}/dist/screenshots"
-
-# Taken before this file is sourced by take-shots.sh, so that --corpus can move
-# the folder without the recipes knowing.
-for _arg in "$@"; do
-    case "${_prev:-}" in
-        --corpus) CORPUS=$_arg ;;
-    esac
-    _prev=$_arg
-done
 
 # --- the shots --------------------------------------------------------------
 
