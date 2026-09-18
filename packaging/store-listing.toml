@@ -1,0 +1,116 @@
+# The copy both store listings are filled in from.
+#
+# Every line of this is a claim about the code, and a claim like that goes
+# stale silently in a web form nobody diffs. So it lives here, is reviewed and
+# committed like anything else, and `ship` pushes it to both stores on every
+# release. Edit here; do not edit a listing in a browser.
+#
+# The fields both stores take sit at the top of a language. The rest sit under
+# the store that takes them, because the two do not take the same fields and do
+# not count them the same way. The name is under each store because the two can
+# disagree about it — and here they do not: Apple accepted the bare word
+# Filebase, where it refused Slipcase.
+#
+# Limits, which ship checks before the tag and counts in characters rather than
+# bytes: apple.name and apple.subtitle 30, apple.promotional-text 170,
+# apple.keywords 100 including the commas, description 4,000 — the Microsoft
+# Store allows 10,000 and this is written to Apple's — microsoft.short-description
+# 500, microsoft.features 20 of 200, microsoft.keywords 7 of 30.
+#
+# What is *not* here is what changed in this release. That is
+# release-notes.toml, which is rewritten every time; this changes when the
+# product does.
+#
+# No URLs reach the Microsoft Store from here. Its submission document has no
+# field for them: Partner Center keeps the website, the privacy policy and the
+# support contact against the product.
+#
+# **English only, deliberately.** The German half of a listing takes its
+# terminology from the application's own catalogue, so that a listing does not
+# teach a reader a word the window has no use for. Filebase has no `po/` yet.
+# German is added here in the same pass that adds it to the application, and
+# `store_locales` in ship.conf gains `de-de` at the same time.
+
+[locales."en-us"]
+website = "https://excelano.com/filebase/"
+support = "https://excelano.com/filebase/#support"
+privacy = "https://excelano.com/legal/#filebase"
+description = """
+A Slipcase container is a file with its description attached: a document of any kind, packed with a small text file that says what it is. The description travels with the document, so it is still there after the file has been copied, renamed, mailed and filed.
+
+Once a folder holds a few hundred of them, the question stops being what is in this file and becomes which of these files say this. A file manager cannot answer that. To a file manager they are all archives with the same icon.
+
+Filebase answers it.
+
+WHAT YOU DO
+
+Point it at a folder and ask a question:
+
+select @path, title, governance.owner where status = "draft" or tags contains "legal"
+
+What answered comes back as rows: one row per container, one column per metadata key. Tick recursive and it descends; leave it and it does not.
+
+Select a row and that container is beside the table — what its payload is called, how large it is, and its whole description as a tree you can read. Press Open payload and the document goes to whatever your system opens that kind of file with.
+
+WHAT THE LANGUAGE IS
+
+SlipQL, which borrows its clauses from SQL and its literals from TOML, so anyone who can write a description can query one without learning a second way to write a date or quote a string. The chosen folder supplies the from clause, so a query can leave it out. select * gives every key across the containers that answered, which is the quickest way to learn what a folder has to ask about.
+
+A key a container does not have comes back as an empty cell rather than failing the query, because these descriptions are written by people and no two folders agree about what goes in them.
+
+WHAT IT TELLS YOU THAT IT DID NOT DO
+
+A file it could not read is skipped and said so, under the rows. A comparison that crossed types is counted and said so — asking for pages over ten, where one container's pages is the word "many", is neither true nor false, and the row's absence is otherwise the only evidence. A short answer that does not say it is short is a wrong answer.
+
+WHAT IT DOES NOT DO
+
+It does not write. There is no Save in it and no path through it that changes a container; the descriptions are shown and not edited. Slipcase Desktop is the editor.
+
+It keeps no index and no library. Every query is a fresh scan, so the answer is what is on disk now, and there is nothing to import, nothing to rebuild and nothing to go stale.
+
+It makes no network connection of any kind. There is no server behind it, no account to create, no analytics, no telemetry and no crash reporting. It stores nothing: no settings file, no recent-folders list, no cache.
+
+OPEN SOURCE
+
+Written in Rust, free, and open source under the MIT licence, at github.com/excelano/filebase. The query engine is a separate crate anyone can build on, and the format is a published specification that any ZIP tool can read.
+"""
+
+[locales."en-us".apple]
+name = "Filebase"
+subtitle = "Query a folder of documents"
+promotional-text = "Point it at a folder of Slipcase containers, ask which of them say what you are looking for, and read the answer as rows."
+keywords = "Slipcase,slpc,metadata,query,search,documents,folder,container,SlipQL,TOML"
+
+[locales."en-us".microsoft]
+name = "Filebase"
+short-description = """
+A Slipcase container is a file with its description attached, and the description travels with it. Once a folder holds a few hundred, the question is which of them say this, and a file manager cannot answer it.
+
+Point Filebase at the folder and ask. What answered comes back as rows, one per container, one column per key. Select a row to read its whole description, and hand the document to whatever opens it.
+
+It never writes a container, keeps no index, and makes no network connection.
+"""
+features = [
+  "Ask a folder of Slipcase containers a question and read the answer as rows: one row per container, one column per metadata key.",
+  "SlipQL takes its clauses from SQL and its literals from TOML, so anyone who can write a description can query one.",
+  "Rows arrive as the scan finds them, so a large folder starts answering at once rather than when it finishes.",
+  "Descend into subfolders, or do not: recursive is a tick box and off by default.",
+  "Select a row to see what the payload is called, how large it is, and the container's whole description as a tree.",
+  "Open the payload in whatever your system has registered for that kind of file.",
+  "A key a container does not have is an empty cell, not a failed query, because these descriptions are written by people.",
+  "A file it could not read is skipped and reported, and so is a comparison that crossed types.",
+  "It never writes a container. There is no Save, and no path through it that changes one.",
+  "No index and no library: every query is a fresh scan, so the answer is what is on disk now.",
+  "No network connection of any kind. No account, no analytics, no telemetry, no crash reporting.",
+  "Stores nothing on your disk: no settings file, no recent-folders list, no cache.",
+  "Written in Rust and open source under the MIT licence, and so is the format it reads.",
+]
+keywords = [
+  "Slipcase",
+  "slpc",
+  "metadata",
+  "document search",
+  "query",
+  "file manager",
+  "TOML",
+]

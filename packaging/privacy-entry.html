@@ -1,0 +1,46 @@
+<!--
+  The privacy section for excelano.com/legal/#filebase.
+
+  Written to be pasted into `~/excelano.com/legal/index.html` beside the
+  Slipcase Desktop section, whose structure and voice it follows: what it is,
+  the short version, what stays, what leaves, what it does not collect, how to
+  check, and the one thing outside the application's control. Not committed to
+  the website from here, because that repository is not this one's to push.
+
+  Every claim is checkable against this repository at the commit that shipped
+  the release the section describes.
+
+  **Filebase's section is shorter than Slipcase Desktop's, and the difference is
+  the product rather than the writing.** That one remembers a folder, asks the
+  desktop what opens a payload, and writes containers; this one remembers
+  nothing, asks nothing, and writes no container at all. Three paragraphs there
+  have no counterpart here, and saying so is better than inventing them.
+
+  Author: David M. Anderson
+  Built with AI assistance (Claude, Anthropic)
+-->
+<h3 id="filebase">Filebase (macOS, Windows, Linux) — Privacy</h3>
+<p>Filebase is an open-source desktop application for Slipcase containers: a container is one file holding a document of any type together with a short text description of it. Filebase opens a folder of them, runs a query over those descriptions, and shows what answered as rows; selecting a row shows that container's description, and one button hands its document to whatever application your computer has registered for that kind of file. It makes no network connection of any kind. This section is the canonical statement of what Filebase does and does not do with your data. The application is open source so that every claim here is independently verifiable, and the claims are enforced by how the code is built rather than by a policy that depends on the developer behaving well. The repository is at <a href="https://github.com/excelano/filebase" rel="noopener noreferrer">github.com/excelano/filebase</a>.</p>
+
+<h4>The short version</h4>
+<p>Filebase talks to nothing and remembers nothing. There is no server behind it, no account to create, no analytics, no telemetry, no crash reporting, and no third-party SDK. It reads the folder you point it at and writes nothing back to it. On the App Store its App Privacy declaration is “Data Not Collected,” because the developer collects nothing and has nowhere to put it.</p>
+
+<h4>What stays on your device</h4>
+<p><strong>Nothing that outlives the window.</strong> Filebase has no configuration file, no recent-folders list, no history of what you have asked, and no cache. It keeps no index and no library of your documents: every query is a fresh scan of the folder, which is why there is nothing stored to go stale and nothing stored to leak. Closing the application leaves your disk as it found it.</p>
+<p><strong>A payload you press Open on is written to a private temporary folder</strong>, because handing a file to another application means there has to be a file. That folder is created for the running application, readable only by your own account, and removed with its contents when Filebase exits. Where inside it the document lands is decided by the container library rather than by the name recorded inside the container, so a container naming its payload something like <code>../elsewhere</code> cannot place a file outside that folder. If Filebase is killed rather than closed, the folder survives until your operating system clears its temporary directory, which is the same for every application that writes a temporary file.</p>
+
+<h4>What leaves your device</h4>
+<p><strong>Nothing.</strong> Filebase makes no network request. It has no update check, no license check, no analytics service, no crash reporter, and no remote logging. The project imports none of that on purpose, and the dependency list is short enough to read.</p>
+<p><strong>Except what you hand to another application.</strong> Pressing Open passes the document to whatever your computer has registered for that kind of file, and from that moment it is in that application's hands and subject to that application's behaviour, not to this one's. That is the point of the button, and it is worth saying plainly: Filebase does not vet what it hands over and makes no judgement about whether opening something is wise. What it does instead is show you the document's own description first, and show the payload's name escaped, so that a name written to read backwards cannot disguise what kind of file you are about to open.</p>
+
+<h4>What Filebase does not change</h4>
+<p><strong>It never writes a container.</strong> There is no Save in the application and no code path that rewrites one. The description you can read in the pane is drawn by the same editing widget Slipcase Desktop uses, handed a rule that marks every key read-only — so the thing that could edit your file is told not to, rather than merely not being asked. Nothing is ever written beside the container you are reading, including the temporary copy described above. If you want to change a description, Slipcase Desktop is the application that does that.</p>
+
+<h4>What Filebase does not collect</h4>
+<p>Filebase does not collect the contents of your files, the names of your files, what you opened, what you asked, when you asked it, how often, which buttons you pressed, screen views, crash reports, performance metrics, diagnostic logs, device identifiers, advertising identifiers, installation identifiers, or anything else. It has no way to, because it makes no network connection and writes no state. This section and the open-source repository are the substance behind the “Data Not Collected” label.</p>
+
+<h4>One thing outside the application's control</h4>
+<p>Both stores collect their own figures about installs and, on Apple's platforms, aggregate anonymous crash logs from devices where <strong>Share With App Developers</strong> is turned on. Filebase neither collects that data nor contains any code that touches it, but the store may still show the developer account aggregate, anonymised numbers regardless of what the application does. On macOS the control is at <strong>System Settings &gt; Privacy &amp; Security &gt; Analytics &amp; Improvements &gt; Share With Mac Developers</strong>; on Windows, under <strong>Settings &gt; Privacy &amp; security &gt; Diagnostics &amp; feedback</strong>. Either applies to every application, not only this one. A copy installed from the Excelano apt repository or built from source involves no store at all.</p>
+
+<h4>How to verify the claims yourself</h4>
+<p>The repository is public. That it makes no network connection is checkable by reading its dependency list, which names no HTTP client, no analytics library and no crash reporter; on Linux you can also watch it with <code>strace -f -e trace=network</code> and see it open no socket. That it writes nothing is checkable the same way, with <code>strace -f -e trace=openat</code>, or simply by looking for a configuration directory afterwards and finding none. That it never writes a container is checkable by reading <code>src/policy.rs</code>, which is short enough to read in a sitting and is the whole of the rule. The temporary folder and its permissions are in <code>src/main.rs</code>, in the function that makes it.</p>
