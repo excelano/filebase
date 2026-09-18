@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The App Store sandbox, and the one thing Filebase asks for inside it.
+
+  **Read-only, where the rest of the family asks for read-write.** Slipcase
+  Desktop and Segler both save the document they opened, so both need
+  `user-selected.read-write`. Filebase never writes a container: there is no
+  Save in it and no code path that rewrites one, which `src/policy.rs` is the
+  statement of. Asking for write access it would never use would be asking for
+  a capability the product does not have, and the entitlement list is the one
+  place that claim is machine-checkable.
+
+  What the grant covers is the folder a person chooses in the open dialog, and
+  the containers inside it. The sandbox grants a folder recursively, so one
+  choice covers the whole tree a recursive query walks.
+
+  The payload handed over by Open needs no entitlement of its own. It is
+  written inside the application's own container, which is always writable, and
+  handed to another application through the platform's own open mechanism —
+  which is the platform launching that application, not this one reaching
+  outside its box.
+
+  There is no `files.downloads`, no `network.client`, no `network.server`.
+  The application makes no network connection of any kind, and the absence here
+  is what makes that checkable rather than merely stated.
+
+  Author: David M. Anderson
+  Built with AI assistance (Claude, Anthropic)
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
+</dict>
+</plist>
