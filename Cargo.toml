@@ -1,0 +1,114 @@
+[package]
+name = "filebase"
+description = "Query a directory of Slipcase containers by their metadata and look at what comes back"
+homepage = "https://slipcaseformat.org"
+readme = "README.md"
+keywords = ["slipcase", "query", "metadata", "gui", "egui"]
+categories = ["gui", "filesystem"]
+version = "0.1.0"
+edition = "2021"
+authors = ["David M. Anderson"]
+license = "MIT"
+repository = "https://github.com/excelano/filebase"
+# eframe's number, not this code's: nothing written here needs past edition
+# 2021's 1.56, and every other crate in the tree sits below eframe. It rises
+# whenever egui raises its own, so measure rather than trust this line.
+rust-version = "1.95"
+
+[[bin]]
+name = "filebase"
+path = "src/main.rs"
+
+[dependencies]
+# The query engine. This application embeds it rather than growing a second
+# one, which is why it was written first — `~/notes/slipql.md`.
+#
+# `default-features = false` leaves the command behind: the `cli` feature is
+# clap and rustyline, and a window needs neither.
+#
+# **This is a path dependency and a committed manifest must not carry one.**
+# slipql 0.1.0 is built and its CI is green but it has never been tagged or
+# published, so there is no version to require yet. The moment it is on
+# crates.io this becomes `slipql = { version = "0.1", default-features = false }`
+# and the path goes, and until then this repository builds on one machine.
+slipql = { path = "../slipcase/slipql", default-features = false }
+# The container library, for what the detail pane says about a payload. Reached
+# directly rather than through slipql's re-export so that the dependency is
+# visible here, and pinned to the same requirement slipql resolves: two `slpc`
+# versions in the graph would make `DocumentMut` two types and stop the
+# metadata tree compiling.
+#
+# The `fs` feature is the library's file-placement half, and `payload_path` is
+# behind it: the function that decides where a payload member lands, rather than
+# letting a member named `../x` or `C:\x` decide. A window that hands payloads
+# to the system needs it; without the feature it is compiled out.
+slpc = { version = "0.3.10", features = ["fs"] }
+# The metadata tree, drawn read-only here through `ReadOnly` in `src/policy.rs`.
+# One TOML editor across Tommy Flyleaf, Slipcase Desktop and this, rather than
+# three that drift; behaviour it lacks goes there.
+#
+# `default-features = false` leaves its own application binary, eframe and rfd
+# behind; this crate has its own of each. Its `egui` is the one `eframe`
+# re-exports and its `toml_edit` is the one `slpc` re-exports, and both have to
+# be: this crate hands a `DocumentMut` from one to the other.
+flyleaf = { version = "0.2", default-features = false }
+# The language the window draws in, and the reader for the `.po` catalogues.
+# There are none yet — `po/` arrives with the German pass — and the call sites
+# are written through `t` from the first commit anyway, because wrapping every
+# sentence afterwards is the expensive half and an empty catalogue costs
+# nothing. `~/notes/desktop_app_from_the_start.md`.
+potext = "0.1"
+# Defaults carry accesskit, which stays on.
+eframe = "0.36"
+# Defaults are `xdg-portal` and `wayland`, both pure Rust. The `gtk3` feature
+# links C through gtk-sys and stays off, which is what taking the defaults
+# does — naming features here would be the way to turn it on by accident.
+rfd = "0.17"
+# Hands a payload to the platform's own mechanism rather than carrying a table
+# of programs to run.
+opener = "0.8"
+# Where a payload is put before it is handed over. An unguessable directory that
+# removes its tree when it drops, rather than one built from a process id: a
+# crashed run leaves that one behind for whoever next holds the id.
+#
+# `Builder::tempdir` goes through the umask — 0755 under the common one — so the
+# mode is asked for explicitly where this makes a directory. slipcase-desktop
+# shipped the other way for a while and every payload somebody pressed Open on
+# was readable by any account on the machine.
+tempfile = "3.27"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# What the desktop says about light and dark. `winit` answers this on the other
+# two platforms and returns a hardcoded `None` here, so egui falls back to dark
+# and no desktop setting reaches the window. `src/system_theme.rs` says what was
+# measured and where.
+#
+# The answer lives on D-Bus, in the XDG desktop portal. zbus is pure Rust with
+# no build script, and it is already compiled on this target under
+# `accesskit_unix`, which arrives through `egui-winit`; `blocking-api` is a
+# feature of that same crate and adds no crate to the tree. `default-features`
+# is off so that `async-io` is named rather than taken, which is what
+# `accesskit` already turns on.
+zbus = { version = "5", default-features = false, features = ["async-io", "blocking-api"] }
+
+# A Mac App Store submission was refused on 2026-08-31 under Guideline 2.5.1 for
+# referencing `_CGSSetWindowBackgroundBlurRadius`, a private CoreGraphics symbol
+# nothing here calls. `winit` declares it in `platform_impl/macos/ffi.rs` and
+# calls it from `WindowDelegate::set_blur`, neither behind a feature nor a `cfg`,
+# and review reads the symbol table rather than the call graph. slipcase-desktop
+# lost a review cycle to it and measured that a build flag does not help: fat LTO
+# with `-Wl,-dead_strip` still carries the symbol, the call sitting behind a
+# runtime `if attrs.blur` the optimizer will not fold.
+#
+# Upstream removed it in winit#4541 on 2026-07-23, behind a `private-apple-apis`
+# feature that is off by default, and no published release carries that yet.
+# This is that change on the `v0.30.13` tag, pinned by revision so the branch
+# cannot move under it. **Delete it when a winit release carries the gate.**
+#
+# The branch is two commits and the second is why `Cargo.lock` moves by one line:
+# patching from a git repository makes that repository's other workspace members
+# candidates, and winit's tree carries `dpi` behind a `path =` that
+# `cargo publish` strips, so the first pin silently took `dpi` 0.1.1 where the
+# release resolves 0.1.2. Check the lockfile moves by one line on any re-pin.
+[patch.crates-io]
+winit = { git = "https://github.com/excelano/winit", rev = "3cfd905679da3ca241b97dea723211b580620a27" }
