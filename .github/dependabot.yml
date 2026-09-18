@@ -1,0 +1,27 @@
+# Dependabot keeps this repository's GitHub Actions current, so a security fix
+# arrives as a pull request rather than slipping past. The bumps are grouped
+# into one pull request so they land together.
+#
+# Package versions are not Dependabot's work here. `ship` runs the language's
+# own update as a release step, which puts the decision at the moment the tree
+# is being looked at anyway, and keeps what a release ships current as of that
+# release. Security alerts are a separate switch and stay on.
+#
+# No ignores. The repositories that hold `actions/checkout` and the two artifact
+# actions back do so because cargo-dist generates a `release.yml` that pins
+# them, and bumping them independently breaks its plan job. Nothing here is
+# generated: `linux.yml` is this repository's own and every action in it is
+# this repository's to move.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns:
+          - "*"
