@@ -1,5 +1,25 @@
 filebase (0.1.0) unstable; urgency=low
 
+  * The end-to-end tests assumed Linux, and Windows CI said so
+  * The window icon on Windows
+  * The Windows lane
+  * Seed the two generated drivers, and stop inventing an argument for them
+  * The arm64 lane, and the Store screenshots ship dispatches
+  * The folder the screenshots are taken of
+  * The macOS lane: a bundle, sandboxed read-only, with the icon already made
+  * The copy both store listings are filled in from, and the privacy section
+  * Revert the empty changelog: prepare reads the file it is about to write
+  * The changelog starts empty, because prepare writes the first entry
+  * The furniture a repository in this fleet carries
+  * The icon, the Linux package, and a profile ship can read
+  * slipql comes from crates.io, so this tree builds anywhere
+  * The working copy moves under ~/slipcase, beside the rest of the family
+  * The first window: a folder, a query, and what came back
+
+ -- David M. Anderson <david.anderson@excelano.com>  Fri, 18 Sep 2026 16:51:42 -0500
+
+filebase (0.1.0) unstable; urgency=low
+
   * First release.
 
  -- David M. Anderson <david.anderson@excelano.com>  Fri, 18 Sep 2026 14:00:00 -0500
