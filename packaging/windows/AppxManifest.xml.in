@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MSIX package manifest, templated the way `control.in` and the manual pages
+  are. `build-msix.ps1` substitutes the placeholders below; nothing here is
+  meant to be edited per build.
+
+  WHAT MUST COME FROM PARTNER CENTER, AND WHY IT CANNOT BE GUESSED
+
+  @IDENTITY_NAME@, @PUBLISHER@ and @PUBLISHER_DISPLAY_NAME@ are assigned when
+  the name is reserved. A package whose identity disagrees with the reservation
+  is rejected at upload rather than at review, so there is no way to find out
+  you guessed wrong except by trying. @PUBLISHER@ in particular is a full X.500
+  string - `CN=` with a GUID - and not the display name. Reserving the name is
+  cheap and unblocks this file, so it is the first thing to do in the
+  Windows section.
+
+  @VERSION_APPX@ is what `packaging/version.sh` prints when asked for the appx
+  spelling: four parts with the fourth always 0, which the Store requires. It is
+  a different shape from the crate version and from what macOS wants, which is
+  why one script answers all three.
+
+  WHAT IS DECIDED HERE
+
+  **No file-type association at all, where every sibling has one or two.** This
+  application opens a folder rather than a file, and the Windows shell has no
+  way to declare that: `inode/directory` has no counterpart here. So the
+  package declares the application and nothing about what it opens.
+
+  No capabilities beyond `runFullTrust`. This application makes no network call,
+  needs no broad filesystem access - it opens the file it was launched with and
+  writes where a person points a save dialog - and asks for no device. A
+  capability requested and unused is a question at certification with no good
+  answer, and it is what a person reads on the store page before installing.
+
+  Author: David M. Anderson
+  Built with AI assistance (Claude, Anthropic)
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity
+    Name="@IDENTITY_NAME@"
+    Publisher="@PUBLISHER@"
+    Version="@VERSION_APPX@"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Filebase</DisplayName>
+    <PublisherDisplayName>@PUBLISHER_DISPLAY_NAME@</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Point Filebase at a folder of Slipcase containers and ask which of them say what you are looking for. One row per container, one column per metadata key. It never writes a container and makes no network connection.</Description>
+  </Properties>
+
+  <Dependencies>
+    <!-- 10.0.17763 is the oldest Windows 10 that supports the packaging
+         features used here. Raising it excludes machines for nothing; lowering
+         it is not possible. -->
+    <TargetDeviceFamily
+      Name="Windows.Desktop"
+      MinVersion="10.0.17763.0"
+      MaxVersionTested="10.0.22621.0" />
+  </Dependencies>
+
+  <Resources>
+    <!-- The package's languages. `en-us` because the application is written
+         in US English; it said `en-gb` until 2026-09-06, inherited from
+         slipcase-desktop's manifest and argued for nowhere. `de-de` beside it
+         since 2026-09-10, because the application now speaks German. Both
+         show in Partner Center's Packages panel - 0.1.0's read `en-gb` - and
+         both must match `build-msix.ps1`'s makepri `/dq`, which spells the
+         pair `en-US_de-DE`, or the index has no default language and fails
+         silently. They take effect on the next package uploaded. Each is a
+         tag Partner Center opens a *new* submission's Store listing under,
+         which is how a package language becomes a listing language - measured
+         on duckling 2026-09-09. It cannot rename a listing that already
+         exists - that one is deleted and a new one added on the Store
+         listings page. slipcase-desktop met this first,
+         on 2026-08-31; `~/fenster/LIMITS.md` is the long-form record. -->
+    <Resource Language="en-us" />
+    <Resource Language="de-de" />
+  </Resources>
+
+  <Applications>
+    <Application
+      Id="Filebase"
+      Executable="filebase.exe"
+      EntryPoint="Windows.FullTrustApplication">
+
+      <uap:VisualElements
+        DisplayName="Filebase"
+        Description="Ask a folder of Slipcase containers a question and read the answer as rows."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+
+      <!-- **No Extensions, where every sibling declares file associations here.**
+           Slipcase Desktop claims `.slpc`, Segler claims `.dclx` and `.dclg`.
+           Filebase opens a *folder*, and there is no extension in that: the
+           Windows shell has no notion of an application that handles a
+           directory the way a Linux desktop entry does with
+           `inode/directory`, so there is nothing to declare and nothing for a
+           double-click to find. It is launched from the Start menu and handed
+           a folder through its own Open folder button, or given one as an
+           argument on a command line.
+
+           The consequence for the assets beside this file: there is no
+           `FileTypeLogo`, because that picture is what a declared association
+           is drawn with. `packaging/make-icons` writes four assets where the
+           siblings write five. -->
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- A packaged desktop application needs this and nothing else. See the
+         comment at the top of this file. -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

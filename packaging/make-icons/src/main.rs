@@ -80,6 +80,63 @@ const ICNS_ELEMENTS: &[(u32, icns::IconType)] = &[
     (1024, icns::IconType::RGBA32_512x512_2x),
 ];
 
+// ---------------------------------------------------- the Windows package ---
+
+/// The display scalings Windows offers, as the Store spells them.
+///
+/// Without these there is one bitmap per asset and every other scaling is an
+/// upscale of it. The `.ico` carries nine sizes for exactly this reason and the
+/// argument does not change because the file is a PNG.
+const SCALES: &[u32] = &[100, 125, 150, 200, 400];
+
+/// The sizes the shell asks for when it wants an icon rather than a tile.
+const TARGET_SIZES: &[u32] = &[16, 24, 32, 48, 256];
+
+/// The three forms of each target size, and why the list exists.
+///
+/// `BackgroundColor` in the manifest is `transparent`, so where Windows draws a
+/// *plated* icon it fills the plate with the person's accent colour and the
+/// drawing lands on a coloured square, while a side-loaded install draws the
+/// same icon unplated out of the `.ico`. One application with two faces.
+///
+/// An `altform-unplated` asset is what tells the shell not to plate. The light
+/// variant is the same pixels, because this drawing is coloured rather than
+/// monochrome, but the qualifier has to exist or Windows 11 falls back to the
+/// plated form on a light taskbar.
+const ALTFORMS: &[&str] = &["", "_altform-unplated", "_altform-lightunplated"];
+
+/// One image `AppxManifest.xml` names, at the size the Store wants.
+struct Asset {
+    stem: &'static str,
+    width: u32,
+    height: u32,
+    /// How much of the shorter side the drawing occupies, centred.
+    fill: f32,
+    /// Whether the shell ever draws this one as a bare icon rather than on a
+    /// tile. Only `Square44x44Logo` is, and only that one gets the target-size
+    /// and unplated variants.
+    icon: bool,
+}
+
+/// The four images this package's manifest names, and nothing else.
+///
+/// The dimensions are the Store's and are not a choice. `fill` is: a tile is
+/// drawn on a coloured plate and Microsoft's tile guidance leaves the icon about
+/// two thirds of it, where an icon-shaped asset is drawn at the size it is given
+/// and wants the whole of it, which is also what the `.ico` does at every size.
+/// Only a look at real tiles settles the two thirds, and slipcase-desktop took
+/// that look.
+///
+/// **There is no `FileTypeLogo`, where the siblings have one.** That asset is
+/// the picture a declared file association is drawn with, and this application
+/// declares none: it opens a folder.
+const ASSETS: &[Asset] = &[
+    Asset { stem: "StoreLogo",         width:  50, height:  50, fill: 1.00, icon: false },
+    Asset { stem: "Square44x44Logo",   width:  44, height:  44, fill: 1.00, icon: true  },
+    Asset { stem: "Square150x150Logo", width: 150, height: 150, fill: 0.66, icon: false },
+    Asset { stem: "Wide310x150Logo",   width: 310, height: 150, fill: 0.66, icon: false },
+];
+
 // ----------------------------------------------------------- the listings ---
 
 /// The sizes a submission form asks for.
@@ -116,8 +173,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    println!("wrote filebase.ico, filebase.icns and {} listing squares into {}",
-        LISTING_SIZES.len() * 2, icons.display());
+    // The package assets are rendered from the *square* drawing. Every other
+    // consumer takes the rounded one because it draws what it is given; the Store
+    // plates and masks these itself, and a corner already on the artwork is a
+    // corner rounded twice.
+    //
+    // The Windows package's own assets, which are the one thing this tool writes
+    // outside `packaging/icons/`: they are named by the manifest beside them and
+    // are that lane's rather than shared.
+    let windows = here
+        .parent()
+        .ok_or("make-icons is not inside packaging/")?
+        .join("windows");
+    let assets = write_assets(&square, &windows.join("assets"))?;
+
+    // The icon directory the window reads at startup and the installer
+    // registers, beside the manifest that names the assets.
+    write_ico(&rounded, &windows.join("filebase.ico"))?;
+
+    println!(
+        "wrote filebase.ico and filebase.icns into {}, {} listing squares beside them, \
+         and {assets} package assets plus filebase.ico into {}",
+        icons.display(),
+        LISTING_SIZES.len() * 2,
+        windows.display()
+    );
     Ok(())
 }
 
@@ -126,33 +206,80 @@ fn read(path: &Path) -> Result<usvg::Tree, Box<dyn std::error::Error>> {
     Ok(usvg::Tree::from_data(&source, &usvg::Options::default())?)
 }
 
-/// The drawing on a square canvas of the given size.
+/// The drawing centred on a canvas of the given size, occupying `fill` of the
+/// shorter side.
 ///
 /// Every raster here comes through this, so nothing is ever an upscale of
 /// another raster: each size is the vector rendered at that size, which is the
-/// difference the `.ico`'s nine entries exist for.
-fn draw(tree: &usvg::Tree, size: u32) -> Result<tiny_skia::Pixmap, Box<dyn std::error::Error>> {
+/// difference the `.ico`'s nine entries exist for. It is also what makes the
+/// wide tile the same rendering as the square one rather than a stretch of it.
+fn draw(
+    tree: &usvg::Tree,
+    width: u32,
+    height: u32,
+    fill: f32,
+) -> Result<tiny_skia::Pixmap, Box<dyn std::error::Error>> {
     let mut pixmap =
-        tiny_skia::Pixmap::new(size, size).ok_or("a pixmap of that size could not be made")?;
+        tiny_skia::Pixmap::new(width, height).ok_or("a pixmap of that size could not be made")?;
     #[allow(clippy::cast_precision_loss)]
-    let scale = size as f32 / tree.size().width();
+    let (w, h) = (width as f32, height as f32);
+    let side = w.min(h) * fill;
+    let scale = side / tree.size().width();
     resvg::render(
         tree,
-        tiny_skia::Transform::from_scale(scale, scale),
+        tiny_skia::Transform::from_translate((w - side) / 2.0, (h - side) / 2.0)
+            .pre_scale(scale, scale),
         &mut pixmap.as_mut(),
     );
     Ok(pixmap)
 }
 
+/// A square raster at full bleed, which is what every icon format wants.
+fn square(tree: &usvg::Tree, size: u32) -> Result<tiny_skia::Pixmap, Box<dyn std::error::Error>> {
+    draw(tree, size, size, 1.0)
+}
+
 fn write_png(tree: &usvg::Tree, size: u32, path: &Path) -> Result<(), Box<dyn std::error::Error>> {
-    std::fs::write(path, draw(tree, size)?.encode_png()?)?;
+    std::fs::write(path, square(tree, size)?.encode_png()?)?;
     Ok(())
+}
+
+/// Every PNG `AppxManifest.xml` names, at every scaling the shell asks for.
+fn write_assets(tree: &usvg::Tree, into: &Path) -> Result<usize, Box<dyn std::error::Error>> {
+    std::fs::create_dir_all(into)?;
+    let mut written = 0;
+    let put = |name: String, w: u32, h: u32, fill: f32| -> Result<(), Box<dyn std::error::Error>> {
+        std::fs::write(into.join(name), draw(tree, w, h, fill)?.encode_png()?)?;
+        Ok(())
+    };
+    for a in ASSETS {
+        // The unqualified name as well as the qualified ones. The manifest names
+        // this one, and it is what resolves when nothing indexes the package, so
+        // keeping it means the assets are correct with or without
+        // `resources.pri` rather than only with.
+        put(format!("{}.png", a.stem), a.width, a.height, a.fill)?;
+        written += 1;
+        for &scale in SCALES {
+            let f = |n: u32| (n * scale).div_ceil(100);
+            put(format!("{}.scale-{scale}.png", a.stem), f(a.width), f(a.height), a.fill)?;
+            written += 1;
+        }
+        if a.icon {
+            for &size in TARGET_SIZES {
+                for altform in ALTFORMS {
+                    put(format!("{}.targetsize-{size}{altform}.png", a.stem), size, size, 1.0)?;
+                    written += 1;
+                }
+            }
+        }
+    }
+    Ok(written)
 }
 
 fn write_ico(tree: &usvg::Tree, path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let mut dir = ico::IconDir::new(ico::ResourceType::Icon);
     for &size in ICO_SIZES {
-        let pixmap = draw(tree, size)?;
+        let pixmap = square(tree, size)?;
         let image = ico::IconImage::from_rgba_data(size, size, pixmap.data().to_vec());
         dir.add_entry(if size > PNG_ABOVE {
             ico::IconDirEntry::encode_as_png(&image)?
@@ -167,7 +294,7 @@ fn write_ico(tree: &usvg::Tree, path: &Path) -> Result<(), Box<dyn std::error::E
 fn write_icns(tree: &usvg::Tree, path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let mut family = icns::IconFamily::new();
     for &(size, kind) in ICNS_ELEMENTS {
-        let pixmap = draw(tree, size)?;
+        let pixmap = square(tree, size)?;
         let image = icns::Image::from_data(icns::PixelFormat::RGBA, size, size, pixmap.data().to_vec())?;
         // `add_icon_with_type` rather than `add_icon`: the latter picks a type
         // from the pixel count, which cannot distinguish 32x32 from 16x16@2x.
