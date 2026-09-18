@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Filebase, with the corner already rounded.
+
+    Author: David M. Anderson
+    Built with AI assistance (Claude, Anthropic)
+
+    The same drawing as `filebase-square.svg`, which is the source of record:
+    change that one and bring the change here. The two exist because the
+    places an icon goes do not agree about whose job the corner is. A store
+    masks what it is handed and wants the square, so a drawing that arrived
+    pre-rounded would be rounded twice. Everything that draws what it is given
+    - a Windows icon directory, a macOS icon family, a desktop launcher -
+    wants this one.
+
+    The corner is 14.32 of 64, which is 22.37%: Apple's continuous-corner
+    proportion, and close enough to what Windows and the desktops apply that
+    one radius serves all three.
+
+    The comment is inside the element for the gdk-pixbuf reason given in the
+    square, and the opening tag stays on the second line here too.
+  -->
+  <rect width="64" height="64" rx="14.32" fill="#4a6fa5"/>
+  <rect x="12" y="16" width="12" height="28" fill="#d9d3c3"/>
+  <rect x="26" y="9" width="12" height="35" fill="#f2eee4"/>
+  <rect x="40" y="16" width="12" height="28" fill="#d9d3c3"/>
+  <path d="M8 40 h48 v10 a3 3 0 0 1 -3 3 h-42 a3 3 0 0 1 -3 -3 z" fill="#2f3337"/>
+</svg>

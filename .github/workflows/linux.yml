@@ -1,0 +1,209 @@
+# Build the Linux package and put it under the checks a machine can run:
+# architecture, lintian, and that the package installs and what it installed
+# loads. On a push this is a check; on a published release it is also where the
+# package comes from and what attaches it. Nothing headless reaches a window,
+# so the icon at any size and a folder opened from a file manager are not
+# answered here — `packaging/CHECKLIST.md` is where a person answers those.
+#
+# Cloned from slipcase-desktop's, minus two jobs' worth of steps it has no use
+# for: there is no conformance corpus to run, because this application parses no
+# containers of its own, and no media-type association to check through GLib,
+# because it declares no file type at all. It is handed a folder.
+#
+# Author: David M. Anderson
+# Built with AI assistance (Claude, Anthropic)
+
+name: Linux
+
+on:
+  push:
+  pull_request:
+  # Fires when a person publishes the release, which on this loop is what
+  # happens: `ship` creates it with a person's token. A release created by a
+  # workflow using the default GITHUB_TOKEN fires no event at all, and a release
+  # event resolves the workflow file at the tag rather than on the default
+  # branch — so this starts nothing for a tag cut before it existed, and the
+  # dispatch below is what covers that.
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build packages for (e.g. v0.1.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  # Keyed by the tag when this is releasing and by the ref when it is checking,
+  # so a push cannot cancel a run that is building a release's packages. They
+  # shared a group in the repositories cloned from this one, and a push did
+  # exactly that on 2026-09-09.
+  group: linux-${{ github.event.release.tag_name || inputs.tag || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+
+jobs:
+  # The suite and the rules, on one architecture. Nothing in them is
+  # platform-specific below the level Rust already covers.
+  suite:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: What is installed
+        run: rustc -V && cargo -V
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Test
+        run: cargo test
+
+      # Silent, and `--all-targets` so the tests are linted too.
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      # The documentation is read on docs.rs and in an editor's hover, and a
+      # broken intra-doc link is invisible until somebody follows it.
+      - name: Docs
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --no-deps
+
+      # The other two platforms' arms are compiled from here, because a `cfg`
+      # arm nobody builds is an arm that stops compiling without anybody
+      # noticing. Neither is linked, which is what makes this possible on a
+      # Linux runner.
+      - name: The other platforms' arms still compile
+        run: |
+          rustup target add x86_64-pc-windows-msvc aarch64-apple-darwin
+          cargo check --target x86_64-pc-windows-msvc
+          cargo check --target aarch64-apple-darwin
+
+      # Nothing here compiles C, and the check is the artefact rather than the
+      # manifest: `cargo tree -i cc` is non-empty in every tree in this fleet
+      # and always will be, because a dependency offering a C path is not the
+      # same as taking it. ~/notes/pure_rust_preference.md.
+      - name: Nothing compiled C
+        run: |
+          set -eu
+          objects=$(find target/release/build -name '*.o' -print -quit 2>/dev/null || true)
+          if [ -n "$objects" ]; then
+            echo "a build script compiled an object file:" >&2
+            find target/release/build -name '*.o' >&2
+            exit 1
+          fi
+          echo "no object file was produced by any build script"
+
+  package:
+    needs: suite
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag || github.ref }}
+
+      - name: What is installed
+        run: rustc -V && cargo -V && dpkg-deb --version | head -1
+
+      - name: Build the package
+        run: |
+          cargo build --release
+          ./packaging/debian/build-deb.sh
+
+      # Cheap, and the one thing that goes wrong silently once a package is
+      # built somewhere other than where it was compiled: a package labelled
+      # arm64 carrying an x86-64 executable installs perfectly and then does
+      # not run.
+      - name: The package is the architecture it claims
+        run: |
+          deb=$(ls dist/*.deb)
+          test "$(dpkg-deb -f "$deb" Architecture)" = "${{ matrix.arch }}"
+
+      - name: What lintian says
+        run: |
+          set -eu
+          sudo apt-get update -qq
+          sudo apt-get install -y lintian >/dev/null
+          deb=$(ls dist/*.deb)
+          # Errors and warnings, and no overrides file: the package is clean at
+          # both levels or this fails. An override would be a decision to make
+          # in a commit, not a thing to acquire quietly.
+          lintian --fail-on error,warning --no-tag-display-limit "$deb"
+
+      - name: It installs, and the executable loads
+        run: |
+          set -eu
+          deb=$(ls dist/*.deb)
+          sudo apt-get install -y "./${deb#./}"
+
+          command -v filebase
+          file -L "$(command -v filebase)"
+
+          missing=$(ldd "$(command -v filebase)" | grep 'not found' || true)
+          [ -z "$missing" ] || { echo "the package installed but does not resolve:"; echo "$missing"; exit 1; }
+
+          # There is no display here, so the window cannot open and the
+          # application says so and stops. What is being checked is that the
+          # loader accepted the executable at all, which is what the two cases
+          # below distinguish from a refusal.
+          out=$(timeout 20 filebase 2>&1 || true)
+          printf '%s\n' "$out" | sed 's/^/  /'
+          case "$out" in
+              *'error while loading shared libraries'*)
+                  echo "the loader refused the executable" >&2; exit 1 ;;
+              *'cannot execute binary file'*|*'Exec format error'*)
+                  echo "the executable is not this machine's architecture" >&2; exit 1 ;;
+          esac
+
+      # The desktop entry is installed by the package, so it is validated
+      # against what landed rather than against what is in the repository.
+      - name: The desktop entry the package installed is valid
+        run: |
+          set -eu
+          sudo apt-get install -y desktop-file-utils >/dev/null
+          desktop-file-validate /usr/share/applications/filebase.desktop
+          echo "the entry validates, and declares:"
+          grep -E '^(Exec|MimeType|Categories)=' /usr/share/applications/filebase.desktop | sed 's/^/  /'
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: deb-${{ matrix.arch }}
+          path: dist/*.deb
+
+  # Only on a release. A push builds the packages to check them and then throws
+  # them away, which is the point of building them on a push.
+  attach:
+    needs: package
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: packages
+          merge-multiple: true
+
+      - name: Attach the packages to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -eu
+          ls -l packages
+          gh release upload \
+            "${{ github.event.release.tag_name || inputs.tag }}" \
+            packages/*.deb --clobber

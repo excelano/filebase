@@ -1,0 +1,72 @@
+.TH FILEBASE 1 "September 2026" "filebase @VERSION@" "User Commands"
+.SH NAME
+filebase \- query a folder of Slipcase containers by their metadata
+.SH SYNOPSIS
+.B filebase
+.RI [ DIRECTORY ]
+.SH DESCRIPTION
+.B Filebase
+opens a window over a folder of
+.B .slpc
+containers. It binds the folder, runs a SlipQL query over the metadata of the
+containers in it, and shows what answered as rows: one row per container, one
+column per metadata key. Selecting a row shows that container's payload and its
+full metadata beside the table, and offers to hand the payload to whatever the
+system opens that kind of file with.
+.PP
+It reads metadata in place and never unpacks a payload to answer a query. It
+keeps no index and no state, so every query is a fresh scan and the answer is
+what is on disk now. It never writes a container.
+.SH OPTIONS
+There are none.
+.B Filebase
+is a window, not a command-line interface;
+.BR slipql (1)
+is that, over the same query engine.
+.PP
+A single
+.I DIRECTORY
+may be given, which is the folder the window opens bound to. It is what a file
+manager passes when it is asked to open a folder with this application, and
+what a shell gives when somebody names the folder they are standing in. A path
+that is not a directory is declined in the window rather than on the command
+line.
+.SH QUERIES
+The language is SlipQL, and the window embeds the same engine the
+.BR slipql (1)
+command runs.
+.PP
+.nf
+select <columns> [where <condition>] [limit <n>]
+.fi
+.PP
+The bound folder supplies the
+.B from
+clause, so a query typed in the window may leave it out; a
+.B from
+written in the query wins. Columns are metadata keys, with dots into nested
+tables and brackets into arrays.
+.B @path
+is the container's path under the bound folder, and
+.B "select *"
+gives that and then every metadata key across the containers that answered.
+.PP
+A key a container does not have renders as an empty cell rather than failing
+the query, because metadata keys are ad hoc by design. A file that cannot be
+read is skipped and reported under the rows, and so is a comparison that
+crossed types.
+.SH EXIT STATUS
+.B Filebase
+exits 0 when the window closes.
+.SH FILES
+.TP
+.I ~/.local/share/applications/filebase.desktop
+The desktop entry, where it was installed for one account rather than from a
+package.
+.SH SEE ALSO
+.BR slipql (1),
+.BR slipcase (1)
+.PP
+The format: https://slipcaseformat.org
+.SH AUTHOR
+David M. Anderson.

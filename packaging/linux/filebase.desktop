@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Filebase
+GenericName=Container query browser
+Comment=Ask a folder of Slipcase containers a question and see what answered
+Exec=filebase %f
+Icon=filebase
+Terminal=false
+Categories=Utility;FileTools;
+Keywords=slipcase;slpc;container;metadata;query;slipql;search;
+StartupNotify=true
+StartupWMClass=filebase
+MimeType=inode/directory;

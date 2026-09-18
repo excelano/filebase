@@ -1,0 +1,34 @@
+Package: filebase
+Version: @VERSION@
+Architecture: @ARCH@
+Maintainer: David M. Anderson <david.anderson@excelano.com>
+Installed-Size: @SIZE@
+Section: utils
+Priority: optional
+Homepage: https://slipcaseformat.org
+Depends: libc6, libgcc-s1, libwayland-client0, libxkbcommon0, libxkbcommon-x11-0, libegl1, libvulkan1 | libgl1, libx11-6, libx11-xcb1, libxi6, libxcursor1, libxrandr2, desktop-file-utils, hicolor-icon-theme
+Description: Query a folder of Slipcase containers by their metadata
+ Point Filebase at a folder of .slpc containers and ask a question in SlipQL:
+ each container is a row and each metadata key a column. Select a row and the
+ container's payload and its full metadata sit beside the table; one press
+ hands the payload to whatever the system opens that kind of file with.
+ .
+ It reads the metadata in place, through the same library the slipcase command
+ uses, and never unpacks a payload to answer. It keeps no index and no state,
+ so every query is a fresh scan and the answer is what is on disk now. It
+ never writes a container.
+ .
+ The query language is SlipQL, embedded as the slipql crate rather than
+ reimplemented, so the command line and the window answer the same question
+ the same way.
+ .
+ This package depends on no other Slipcase product, which is the difference
+ from Slipcase Desktop and Slipcase Open. Those open a document, so they
+ associate themselves with the .slpc media type and need slipcase-common to
+ declare it. Filebase is handed a folder and declares no file type at all.
+ .
+ Only two of the libraries above are found by dpkg-shlibdeps. The executable
+ links libc and libgcc and nothing else; the display stack, the graphics
+ driver loader and the keyboard map libraries are all opened by name at run
+ time, so every one of them is written here by hand and checked against a
+ running process by packaging/linux/check-libraries.sh.

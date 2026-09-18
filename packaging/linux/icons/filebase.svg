@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Filebase: three containers standing in a base, the middle one raised.
+
+    Author: David M. Anderson
+    Built with AI assistance (Claude, Anthropic)
+
+    The application asks a folder of containers a question and shows what
+    answered, so the mark is many containers rather than one, and one of them
+    is standing proud of the others because that is what a query returns.
+    Slipcase Desktop's mark is a single card sliding into a single case, and
+    the two are meant to read as different things: one container, against a
+    base of them.
+
+    This comment sits inside the element rather than above it, and that is a
+    measurement rather than a style: gdk-pixbuf decides a file's format by
+    sniffing the first 256 bytes for `<svg`, and refuses the file when the tag
+    comes later - which is what a header comment above the tag does. Every
+    file manager then falls back to a generic icon, while `rsvg-convert`
+    parses rather than sniffs and renders it perfectly throughout, so the
+    defect survives being checked at four sizes. slipcase-desktop found it the
+    hard way. Keep the opening tag on the second line.
+
+    Filled shapes and no strokes at all, which is what still reads at 16
+    pixels. The palette is segler's, which is slipcase-desktop's, on purpose:
+    the Excelano desktop applications should look like siblings on a launcher.
+    Read: two greyer containers either side of a cream one, in a dark base, on
+    a blue tile. Checked at 16, 24, 32, 48 and 128 pixels on light and dark
+    grounds, and against segler and slipcase-desktop side by side at 32 and
+    128 to see that it belongs to them and is not one of them.
+
+    Three shapes and a base. A mouth band across the base, and a drawer handle
+    on it, were both drawn and both thrown away: neither survives below 128,
+    and the family rule is that anything finer than what reads at 16 is mud.
+
+    A plain square, full bleed and unframed: a store takes a square and
+    applies its own corner rounding, so a drawing that carries its own smaller
+    shape or its own outline into that frame is a sticker on a tile. The blue
+    reaches all four edges and nothing is drawn around it.
+  -->
+  <rect width="64" height="64" fill="#4a6fa5"/>
+  <!-- The two that did not answer, shorter and greyer. -->
+  <rect x="12" y="16" width="12" height="28" fill="#d9d3c3"/>
+  <!-- The one that did: taller, and the cream the family keeps for paper. -->
+  <rect x="26" y="9" width="12" height="35" fill="#f2eee4"/>
+  <rect x="40" y="16" width="12" height="28" fill="#d9d3c3"/>
+  <!-- The base they stand in, drawn over their feet so they sit inside it. -->
+  <path d="M8 40 h48 v10 a3 3 0 0 1 -3 3 h-42 a3 3 0 0 1 -3 -3 z" fill="#2f3337"/>
+</svg>
