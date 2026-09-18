@@ -42,6 +42,37 @@ use filebase::{Detail, ReadOnly};
 /// packaging installs that entry; this is the half that lives in the binary.
 const APP_ID: &str = "filebase";
 
+/// The window's icon on Windows, which has no `.desktop` entry to find one in.
+///
+/// `APP_ID` above is how Linux answers this question and it does nothing here:
+/// `with_app_id` is Wayland's `xdg_toplevel.set_app_id` and neither egui,
+/// eframe nor winit turns it into anything on Windows.
+#[cfg(target_os = "windows")]
+const WINDOW_ICON: &[u8] = include_bytes!("../packaging/windows/filebase.ico");
+
+/// The icon at the largest size the drawing carries without being upscaled.
+///
+/// A window gets one image and Windows scales it to 16 in the title bar and 32
+/// in the task bar, doubling both at 200%. 64 is a whole multiple of those four,
+/// so each is an integer downsample of the same drawing. It is not a multiple of
+/// what the intermediate scalings ask for — 125% wants 20 and 40, 150% wants 24
+/// and 48 — and those are resampled rather than downsampled evenly. 64 stays the
+/// choice because it is the largest entry no scaling has to enlarge.
+///
+/// A failure here is not worth a message: the window gets eframe's default icon
+/// and everything else about the application works.
+#[cfg(target_os = "windows")]
+fn window_icon() -> Option<egui::IconData> {
+    let directory = ico::IconDir::read(std::io::Cursor::new(WINDOW_ICON)).ok()?;
+    let entry = directory.entries().iter().find(|e| e.width() == 64)?;
+    let image = entry.decode().ok()?;
+    Some(egui::IconData {
+        rgba: image.rgba_data().to_vec(),
+        width: image.width(),
+        height: image.height(),
+    })
+}
+
 /// The query a new window starts with.
 ///
 /// `select *` rather than an empty box: a person who has just chosen a folder
@@ -97,14 +128,19 @@ fn main() -> eframe::Result {
     // `None`, and the macOS arm only calls `setApplicationIconImage:` where
     // there is an image.
     //
-    // The Windows arm is the other half of this and is not written yet: it
-    // decodes the 64-pixel entry out of `packaging/windows/filebase.ico` and
-    // hands it over, because Windows takes a window icon from a compiled
-    // resource and this build has no resource compiler. It arrives with the
-    // icon pass, and `~/notes/desktop_app_from_the_start.md` says why there are
-    // three drawings rather than one.
     #[cfg(target_os = "macos")]
     let viewport = viewport.with_icon(egui::IconData::default());
+
+    // Windows is the opposite case: it takes a window icon from a resource
+    // compiled into the executable, and `build.rs` keeps a resource compiler out
+    // of this build, so nothing is there to find. The `.ico` is carried as bytes
+    // and one entry decoded at startup instead. Shadowed rather than made
+    // mutable, so no platform without an icon to set carries an unused `mut`.
+    #[cfg(target_os = "windows")]
+    let viewport = match window_icon() {
+        Some(icon) => viewport.with_icon(icon),
+        None => viewport,
+    };
 
     let options = eframe::NativeOptions {
         viewport,
