@@ -1,0 +1,200 @@
+# The arm64 half, and the Store screenshots.
+#
+# The Mac lane is an Intel Mac Mini, so the aarch64 slice is otherwise code
+# nobody has run: it is built on Linux, signed on the Mini, and shipped. This
+# runs it on Apple silicon and asks the window server whether a window actually
+# appeared.
+#
+# It is also where the Store screenshots are taken. They are not taken on the
+# Mini: `ship` looks through these workflows for one that declares a
+# `screenshots` input and runs on macOS, dispatches it, and downloads what it
+# uploaded. The Mini's job is signing and uploading, which it does over ssh.
+#
+# **What this cannot check, because Filebase has none of it.** The sibling
+# applications open a document, so their version of this step registers the
+# bundle with Launch Services, opens a document through it, and checks that the
+# window is titled for the document — which is how they prove the Apple Event
+# handler works. Filebase declares no document type and has no such handler: it
+# is handed a folder as `argv[1]`. So the check here is that the window appears
+# at all, which is the whole of what this application promises on launch.
+#
+# Author: David M. Anderson
+# Built with AI assistance (Claude, Anthropic)
+
+name: Apple silicon
+
+on:
+  push:
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      # Optional, because a screenshots run has no tag to give. With one the
+      # binary the Mac signs is built and attached to that release; without one
+      # this is the suite, the window and whatever screenshots were asked for.
+      tag:
+        description: 'Tag to build the universal binary for (e.g. v0.1.0)'
+        required: false
+        type: string
+      # A choice rather than a boolean, because there is a third thing to ask
+      # for: `reference` takes the one plain frame a coordinate gets measured
+      # off, and `full` takes the set. Every coordinate in
+      # packaging/macos/shots.sh is read off a reference frame rather than
+      # guessed, so the first run of a new set is always `reference`.
+      screenshots:
+        description: 'Store screenshots'
+        required: false
+        default: 'no'
+        type: choice
+        options: ['no', 'reference', 'full']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apple-silicon-${{ github.event.release.tag_name || inputs.tag || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+
+jobs:
+  arm64:
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag || github.ref }}
+
+      - name: The runner is Apple silicon
+        run: |
+          set -eu
+          arch=$(uname -m)
+          echo "uname -m: ${arch}"
+          [ "$arch" = arm64 ] || {
+            echo "::error::This job exists to run the aarch64 slice and this runner is ${arch}."
+            exit 1
+          }
+
+      - name: What is installed
+        run: rustc -V && cargo -V && swiftc --version | head -1
+
+      - name: Build
+        run: cargo build
+
+      # The same rule the Linux lane checks: nothing here compiles C, and the
+      # check is the artefact rather than the manifest.
+      - name: Nothing compiled C
+        run: |
+          set -eu
+          if find target/debug/build -name '*.o' -print -quit 2>/dev/null | grep -q .; then
+            echo "::error::a build script compiled an object file"
+            find target/debug/build -name '*.o'
+            exit 1
+          fi
+          echo "no object file was produced by any build script"
+
+      - name: Test
+        run: cargo test
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Assemble the bundle
+        run: |
+          set -eu
+          target=$(cargo metadata --format-version 1 --no-deps |
+              sed -n 's/.*"target_directory":"\([^"]*\)".*/\1/p')
+          ./packaging/macos/build-app.sh --binary "${target}/debug/filebase"
+          lipo -info dist/Filebase.app/Contents/MacOS/filebase
+          ls dist/Filebase.app/Contents/Resources
+
+      # The folder the window opens on, built by the committed script so that
+      # what CI photographs is what anyone can reproduce.
+      - name: A folder of containers to ask about
+        run: |
+          set -eu
+          cargo install slipcase --quiet
+          ./packaging/demo-corpus.sh --out "${RUNNER_TEMP}/corpus"
+
+      # A folder arrives as an argument here, not as an Apple Event: this
+      # application declares no document type, so there is nothing for Launch
+      # Services to route and nothing for a double-click to find. What is being
+      # checked is that the arm64 slice draws a window at all — which is the
+      # slice that is otherwise never run, since the Mac that signs is Intel.
+      - name: A window appears on arm64
+        run: |
+          set -eu
+          swiftc -O packaging/macos/window-probe.swift -o "${RUNNER_TEMP}/window-probe"
+
+          open -a "$PWD/dist/Filebase.app" --args "${RUNNER_TEMP}/corpus"
+
+          # Cold launch, a window server, and a first frame. Polled rather than
+          # slept at; 30 seconds is far past anything measured by hand.
+          for _ in $(seq 1 15); do
+            sleep 2
+            "${RUNNER_TEMP}/window-probe" Filebase >/dev/null 2>&1 && break
+          done
+
+          set +e
+          report=$("${RUNNER_TEMP}/window-probe" Filebase)
+          verdict=$?
+          set -e
+          echo "$report"
+          case "$verdict" in
+            0) echo "the arm64 build drew a window for a folder handed to it" ;;
+            2)
+              # Not a failure of the application, and deliberately not a pass
+              # either: a check that can quietly not check is the thing this
+              # fleet keeps getting caught by.
+              echo "::error::The window server listed nothing, so this run answered nothing about the window."
+              exit 1 ;;
+            *)
+              echo "::error::No window appeared on arm64 for a folder given as an argument."
+              exit 1 ;;
+          esac
+
+      # For eyes, not for the verdict. The step above is what passes or fails.
+      - name: Photograph it, for a person
+        if: always()
+        run: |
+          screencapture -x "${RUNNER_TEMP}/screen.png" || true
+          ls -l "${RUNNER_TEMP}/screen.png" || true
+
+      - name: Keep the photograph
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: arm64-window
+          path: ${{ runner.temp }}/screen.png
+          if-no-files-found: ignore
+
+      # Built here and signed on the Mac: the Distribution certificate stays
+      # where it is, and the slow half happens before anybody is waiting. The
+      # steps are excelano/.github's, because every repository with this target
+      # needs the same ones.
+      - name: The binary the Store package is built from
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
+        uses: excelano/.github/.github/actions/mac-release-binary@main
+        with:
+          binary: filebase
+          package: filebase
+          tag: ${{ github.event.release.tag_name || inputs.tag }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Off unless asked for. A bug fix should not pay for a set of Store
+      # screenshots, and a set nobody asked for is a set nobody looks at.
+      # `shots.sh` carries the recipes and is the same command that retakes them
+      # by hand; everything around it is the org's.
+      #
+      # English only, because the listing is English only: German is added to
+      # the application, the listing and this line in one pass, and `shots.sh`
+      # refuses a language it has no set for rather than photographing an
+      # English window under a German heading.
+      - name: The Store screenshots
+        if: inputs.screenshots && inputs.screenshots != 'no'
+        uses: excelano/.github/.github/actions/mac-store-screenshots@main
+        with:
+          app: dist/Filebase.app
+          mode: ${{ inputs.screenshots }}
+          languages: en
+          args: --corpus ${{ runner.temp }}/corpus
