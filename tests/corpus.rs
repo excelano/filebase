@@ -125,6 +125,17 @@ fn cells(run: &Run, column: &str) -> Vec<String> {
         .collect()
 }
 
+/// A container's path with the separator this test can write down.
+///
+/// `@path` is the platform's own spelling, because it comes from a `PathBuf`
+/// relative to the `from` root — so Windows answers `2026\q3\a.slpc` where
+/// Linux answers `2026/q3/a.slpc`. Both are right, and a test that writes one
+/// of them as a literal is a test that passes on one platform. Windows CI
+/// caught this on its first run.
+fn slashed(s: &str) -> String {
+    s.replace('\\', "/")
+}
+
 /// Would catch the window binding a folder and scanning the whole tree under
 /// it: `recursive` is opt-in, and a file manager that descended by default
 /// would answer a question nobody asked and cost the time of doing it.
@@ -136,7 +147,7 @@ fn a_bound_folder_does_not_descend_unless_asked() {
     assert_eq!(cells(&shallow, "@path"), vec!["msa.pdf.slpc"]);
 
     let deep = run_to_end(root.path(), true, "select @path, title");
-    let mut paths = cells(&deep, "@path");
+    let mut paths: Vec<String> = cells(&deep, "@path").iter().map(|p| slashed(p)).collect();
     paths.sort();
     assert_eq!(
         paths,
@@ -259,7 +270,7 @@ fn a_selected_row_opens_the_container_the_row_names() {
     assert_eq!(run.rows().len(), 1);
 
     let relative = run.rows()[0].path.clone();
-    assert_eq!(relative, "2026/q3/q3.xlsx.slpc");
+    assert_eq!(slashed(&relative), "2026/q3/q3.xlsx.slpc");
 
     let detail = Detail::open(root.path(), &relative);
     let Outcome::Read(contents) = &detail.outcome else {
@@ -302,7 +313,14 @@ fn a_payload_is_handed_over_from_somewhere_else() {
     let detail = Detail::open(root.path(), "msa.pdf.slpc");
     let out = detail.extract_to(scratch.path()).unwrap();
 
-    assert_eq!(out.parent(), Some(scratch.path()));
+    // Canonicalised on both sides. `slpc::payload_path` resolves the directory,
+    // and on Windows that turns `C:\Users\RUNNER~1\...` into the verbatim
+    // `\\?\C:\Users\runneradmin\...`, which is the same directory spelled the
+    // way the file system answers. Windows CI caught this too.
+    assert_eq!(
+        out.parent().map(|p| p.canonicalize().unwrap()),
+        Some(scratch.path().canonicalize().unwrap())
+    );
     assert_eq!(out.file_name().unwrap(), "msa.pdf");
     assert_eq!(
         std::fs::read_to_string(&out).unwrap(),
