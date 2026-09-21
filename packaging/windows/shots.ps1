@@ -115,7 +115,7 @@ if (-not $OutDir) { $OutDir = Join-Path $root 'dist\screenshots' }
 # the title bar is a different height, so everything below it shifts. That is
 # why the two recipes carry their own coordinates rather than sharing a table.
 # **The tick box moves with the language, and nothing else here does.** It sits
-# just right of `Open folder…`, whose German is `Ordner öffnen …` and about
+# just right of the folder button, whose German label is about
 # seventeen pixels wider, so the English coordinate lands *inside the button* in
 # a German window: measured on 2026-09-21, the button spans 9-116 in German and
 # 9-99 in English, and the box 125-138 against 108-121. The first German set
@@ -195,8 +195,17 @@ function Get-Shots {
 # deep, which is the whole point of the recursive tick box.
 # The folder's own name is translated too. It is the widest thing in the folder
 # bar and the first thing read in the frame.
+#
+# **The German name is built from a code point and this file is pure ASCII.**
+# Windows PowerShell reads a `.ps1` as ANSI unless it carries a byte-order
+# mark, so a UTF-8 umlaut written as a literal here reaches the folder bar as
+# two wrong characters - measured on 2026-09-21 in a German set that was
+# correct in every other respect, which is the point: it photographs, it does
+# not fail. slipcase-desktop and segler keep their recipes ASCII for this
+# reason and this file now does too.
+$A_UMLAUT = [char]0x00E4
 $STAGED = if ($Lang -eq 'de') {
-    Join-Path $env:USERPROFILE 'Documents\Verträge'
+    Join-Path $env:USERPROFILE ("Documents\Vertr" + $A_UMLAUT + "ge")
 } else {
     Join-Path $env:USERPROFILE 'Documents\Contracts'
 }
