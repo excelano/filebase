@@ -231,6 +231,16 @@ fi
 # noise. The whole `.framework` directory is searched and not just its
 # `Headers`, because Carbon and CoreServices are umbrellas whose declarations
 # live in sub-frameworks beneath them.
+#
+# **And the search follows symlinks**, because an umbrella's sub-frameworks are
+# not all real directories. `winit` links `CGDisplayCreateUUIDFromDisplayID` and
+# `CGDisplayGetDisplayIDFromUUID` through ApplicationServices, the public header
+# declaring them is ColorSync's, and in every SDK on the Mac (14, 15.5, 26,
+# 26.2) `ApplicationServices.framework/Versions/A/Frameworks/ColorSync.framework`
+# is a symlink up to the top-level framework, which a plain `find` does not
+# enter. Without `-L` the umbrella yields 59 headers and no `ColorSyncDevice.h`;
+# with `-L`, 1281 headers and the declaration. Both symbols are public and are
+# in the accepted Store bundle of Slipcase Desktop.
 private_symbols() {
     exe="$1"
     sdk=$(xcrun --sdk macosx --show-sdk-path 2>/dev/null) || sdk=""
@@ -265,7 +275,7 @@ private_symbols() {
         [ -d "$dir" ] || continue
         awk -v f="$framework" '$1 == f { print $2 }' "${scratch}/pairs" |
             sort -u > "${scratch}/wanted"
-        find "$dir" -name '*.h' -print0 2>/dev/null |
+        find -L "$dir" -name '*.h' -print0 2>/dev/null |
             xargs -0 grep -hoFw -f "${scratch}/wanted" 2>/dev/null |
             sort -u > "${scratch}/declared"
         comm -23 "${scratch}/wanted" "${scratch}/declared" |
