@@ -168,18 +168,20 @@ jobs:
         run: |
           cargo install slipcase --quiet
           ./packaging/demo-corpus.sh
+          ./packaging/demo-corpus.sh --lang de
 
-      # English only, because the listing is English only, and `shots.ps1`
-      # refuses any other language rather than photographing an English window
-      # under a German heading. The language is also the directory the set
-      # lands in, which is how the Store files a frame and what `ship` refuses
-      # a set for the want of.
+      # Both languages, because the listing is in both. `shots.ps1` refuses a
+      # language it has no set for, and opens a German corpus for the German
+      # set: this application's frames are almost entirely container metadata,
+      # so the window's language alone would not make a German frame. The
+      # language is also the directory the set lands in, which is how the Store
+      # files a frame and what `ship` refuses a set for the want of.
       - name: The Store screenshots
         if: inputs.screenshots && inputs.screenshots != 'no'
         uses: excelano/.github/.github/actions/store-screenshots@main
         with:
           mode: ${{ inputs.screenshots }}
-          languages: en
+          languages: en de
 
       - name: The committed icons and Store assets still match their generator
         run: |

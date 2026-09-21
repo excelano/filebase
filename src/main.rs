@@ -35,6 +35,20 @@ use filebase::i18n::{fill, t};
 use filebase::query::{self, Run, Update};
 use filebase::{Detail, ReadOnly};
 
+/// Every language this application is translated into.
+///
+/// German alone, and the tree inside the window is translated by `flyleaf`'s
+/// own catalogue rather than by this one — `set_language` below hands the tag
+/// to both.
+const CATALOGUES: &[(&str, &str)] = &[
+    ("de", include_str!("../po/de.po")),
+    // Debug builds alone, so a release carries nothing of it. `po/pseudo.sh`
+    // says what it finds: a string still in English never went through `t`,
+    // and a label with its end cut off was laid out to the width of English.
+    #[cfg(debug_assertions)]
+    ("en-x-pseudo", include_str!("../po/en-x-pseudo.po")),
+];
+
 /// The window's identity to the desktop environment.
 ///
 /// A Wayland compositor matches this against the basename of the `.desktop`
@@ -90,13 +104,11 @@ fn main() -> eframe::Result {
     // and passed on rather than asked twice, because a tree in a different
     // language from the window around it would be worse than an English one.
     //
-    // This application's own catalogue list is empty until the German pass
-    // writes `po/`, so `set_language` finds nothing and every sentence stays
-    // the English it was written in. The call is here from the first commit so
-    // that the pass is a directory of `.po` files and one list, not a sweep of
-    // every string in the tree.
+    // Both answers are discarded: they say which catalogue matched, and a
+    // language with no catalogue is a window in English, which is the fallback
+    // either way.
     if let Some(language) = potext::preferred() {
-        filebase::i18n::set_language(&language, &[]);
+        let _ = filebase::i18n::set_language(&language, CATALOGUES);
         let _ = flyleaf::set_language(&language);
     }
 
@@ -637,5 +649,38 @@ impl App {
                 // container.
                 flyleaf::render(ui, &mut contents.metadata, &ReadOnly);
             });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::CATALOGUES;
+
+    /// Would catch the catalogue list and the `po/` directory drifting apart:
+    /// a language named here with no file behind it does not compile, and a
+    /// file with no entry here is a translation nothing can reach.
+    #[test]
+    fn german_is_one_of_the_catalogues() {
+        assert!(CATALOGUES.iter().any(|(tag, _)| *tag == "de"));
+    }
+
+    /// Would catch a catalogue that parses to nothing — the shape a
+    /// mis-encoded or truncated `.po` takes, which `msgfmt --check` cannot see
+    /// because it reads the file rather than what the program makes of it.
+    ///
+    /// The lookup goes through `filebase::i18n`, which is the crate-wide
+    /// catalogue every sentence in the window is drawn from, so this is the
+    /// same path a person running the application in German takes.
+    #[test]
+    fn the_german_catalogue_answers() {
+        assert_eq!(
+            filebase::i18n::set_language("de", CATALOGUES).as_deref(),
+            Some("de")
+        );
+        assert_eq!(filebase::i18n::t("Payload"), "Nutzlast");
+        assert_eq!(filebase::i18n::t("Open payload"), "Nutzlast öffnen");
+        // A message with a placeholder: the braces have to survive the
+        // translation, because `fill` looks them up by name afterwards.
+        assert!(filebase::i18n::t("{path} is not a folder.").contains("{path}"));
     }
 }

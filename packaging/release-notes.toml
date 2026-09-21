@@ -7,10 +7,6 @@
 # has and this file does not is also a refusal — a listing saying something
 # nobody wrote is worse than a release that stops.
 #
-# One language today. German is added to the application, to store-listing.toml
-# and to this file in one pass; adding it here alone would put German in a
-# listing whose window is English.
-#
 # The limit is 1500 characters a locale.
 #
 # Nothing else reads this. The GitHub release, the Debian changelog and the
@@ -20,6 +16,19 @@
 # Built with AI assistance (Claude, Anthropic)
 
 version = "0.1.2"
+
+[locales."de-de"]
+whats-new = """
+Die erste Fassung. Zeigen Sie Filebase auf einen Ordner voller \
+Slipcase-Container und fragen Sie, welche davon sagen, was Sie suchen; was \
+antwortet, kommt als Zeilen zurück, eine je Container und eine Spalte je \
+Metadatenschlüssel. Wählen Sie eine Zeile, um die ganze Beschreibung dieses \
+Containers neben der Tabelle zu lesen, und geben Sie sein Dokument an das \
+Programm weiter, das diese Art von Datei öffnet.
+
+Es schreibt nie einen Container, führt keinen Index und baut keinerlei \
+Netzwerkverbindung auf.
+"""
 
 [locales."en-us"]
 whats-new = """

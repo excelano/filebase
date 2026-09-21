@@ -60,13 +60,20 @@ HEIGHT=900
 # This is what that flag is for, and it is why this file needs no staging step.
 AS_ARGS=yes
 
-# The folder to open. Built by `packaging/demo-corpus.sh`, which is committed so
-# that the frames are of a corpus anyone can reproduce rather than of whatever
-# happened to be on one machine, and which writes here by default. A fixed path
-# rather than an argument, because `take-shots.sh` is generated and refuses an
-# argument it does not know — the same way `DOCUMENT` is a fixed path in the
-# applications that photograph a document.
-CORPUS="${root}/dist/corpus"
+# The folder to open, per language. Built by `packaging/demo-corpus.sh`, which
+# is committed so that the frames are of a corpus anyone can reproduce rather
+# than of whatever happened to be on one machine. Fixed paths rather than an
+# argument, because `take-shots.sh` is generated and refuses an argument it does
+# not know — the same way `DOCUMENT` is a fixed path in the applications that
+# photograph a document.
+#
+# Two corpora, because this application's frames are almost entirely container
+# *metadata*: a German window over English titles, owners and tags would be a
+# German frame of mostly English pixels, which is the trap the listing rules
+# exist for. `demo-corpus.sh` says why the German file names sort where the
+# English ones do, and it is why the coordinates below serve both sets.
+CORPUS_EN="${root}/dist/corpus"
+CORPUS_DE="${root}/dist/corpus-de"
 
 # Where the shots land. Not committed: dist is where every built artefact goes.
 OUTDIR="${root}/dist/screenshots"
@@ -134,11 +141,9 @@ shots() {
 
 # Which folder this language opens.
 #
-# There is one set and it is English, because the listing is English: German is
-# added to the application, to store-listing.toml and to this function in one
-# pass. Refusing here rather than falling back is deliberate — the alternative
-# is a German listing showing an English window, which is what happened to
-# Slipcase Desktop's German customers.
+# Refusing a language this file has no set for, rather than falling back, is
+# deliberate: the alternative is a German listing showing an English window,
+# which is what happened to Slipcase Desktop's German customers.
 # Where the corpus is copied to before it is photographed, and why it is copied
 # at all: the folder bar shows the path it was given, and a store screenshot
 # reading /Users/runner/work/filebase/filebase/dist/corpus tells a customer
@@ -148,21 +153,25 @@ shots() {
 # flat `cp "$src"/*`, which omits directories, and this corpus is three levels
 # deep — the whole point of the recursive tick box. `cp -R` of the folder itself
 # is what a tree needs.
-STAGED="${HOME}/Documents/Contracts"
+# The folder's own name is translated too. It is the widest thing in the folder
+# bar and the first thing read in the frame, so an English one over a German
+# window would undo the corpus.
+STAGED_EN="${HOME}/Documents/Contracts"
+STAGED_DE="${HOME}/Documents/Verträge"
 
 stage_corpus() {
-    [ -d "$CORPUS" ] || { echo "shots.sh: no corpus at ${CORPUS}; run packaging/demo-corpus.sh" >&2; exit 2; }
-    rm -rf "$STAGED"
-    mkdir -p "$(dirname "$STAGED")"
-    cp -R "$CORPUS" "$STAGED"
+    corpus=$1
+    staged=$2
+    [ -d "$corpus" ] || { echo "shots.sh: no corpus at ${corpus}; run packaging/demo-corpus.sh" >&2; exit 2; }
+    rm -rf "$staged"
+    mkdir -p "$(dirname "$staged")"
+    cp -R "$corpus" "$staged"
 }
 
 for_language() {
     case "$1" in
-        en|en-US|en-us) stage_corpus; document=$STAGED ;;
-        de|de-DE|de-de)
-            echo "shots.sh: no German set is written yet; the application has no German either" >&2
-            exit 2 ;;
+        en|en-US|en-us) stage_corpus "$CORPUS_EN" "$STAGED_EN"; document=$STAGED_EN ;;
+        de|de-DE|de-de) stage_corpus "$CORPUS_DE" "$STAGED_DE"; document=$STAGED_DE ;;
         *) echo "shots.sh: no set is written for $1" >&2; exit 2 ;;
     esac
 }

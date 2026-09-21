@@ -1,0 +1,108 @@
+#!/bin/sh
+# Re-read every translatable string out of the source, and bring each
+# catalogue up to date with what it found.
+#
+# Run it after changing any sentence a person reads, and commit what it
+# changes. It is a command rather than a build step for the reason the
+# conformance corpus is one: it needs `gettext`, which is on the Linux machine
+# and on neither of the other two, and a build that quietly skips itself where
+# a tool is missing is a build that silently ships last month's German.
+#
+# **The file list is a glob and never a `POTFILES.in`.** GNOME projects keep
+# that list by hand and it goes stale the first time somebody adds a file and
+# forgets — the strings in it are then untranslated, the catalogue looks
+# complete, and nothing reports it.
+#
+# **`xgettext` has no Rust.** Its `--language` list ends at Vala; `.rs` is an
+# extension it does not know, so the files are handed to it as C. That reads
+# `t("…")` and `tn("…", "…", n)` correctly, keeps `//` comments out, and joins
+# adjacent string literals the way C does — which Rust does not do, so a
+# message split across two literals would be silently glued into one msgid
+# nothing looks up. Write every message as one literal. Raw strings (`r"…"`)
+# are the other gap: C reads the `r` as an identifier and the string as a
+# string, so a raw string inside `t(…)` extracts wrongly. Neither shape appears
+# in this tree.
+#
+# **It prints a screen of warnings and they are noise.** `unterminated
+# character constant` is a Rust lifetime — `&'static str` — read as the start
+# of a C character literal, and `unterminated string literal` is an apostrophe
+# in a comment. The way a dropped string is found is not by reading them — it
+# is `pseudo.sh` beside this, where anything still in English stands out on
+# sight.
+set -eu
+
+# One directory up: this crate is the repository, so the catalogues sit beside
+# `src` rather than two levels down as they do in the workspaces.
+here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$here/.."
+
+domain=filebase
+# **Inside the crate that reads them.** `include_str!` reaching above a crate's
+# own directory compiles and then fails in `cargo package`, which copies only
+# what is under the crate root: the tarball has no catalogue and the publish
+# dies verifying it. Here the crate root is the repository root, so `po/` is
+# already in the right place — which is luck rather than design, and stops
+# being true the day this grows a second crate.
+pot="po/$domain.pot"
+
+# Sorted so that two runs on two machines produce the same file.
+sources=$(find src -name '*.rs' | sort)
+
+# `--keyword` with no argument first, which drops xgettext's built-in C
+# keywords: `gettext` and its family are not what this application calls, and
+# leaving them in would extract from any function that happened to share a
+# name.
+#
+# `tn:1,2` says the first two arguments are the singular and the plural.
+# `tc` is not listed because nothing here disambiguates by context yet; add it
+# as `tc:1c,2` the day something does.
+#
+# **`fill` is not a keyword and must not become one.** It interpolates into a
+# string `t` has already returned, so its argument is a looked-up message and
+# not a msgid; extracting it would put the English twice in the catalogue,
+# once under a key nothing ever asks for.
+#
+# No version in `Project-Id-Version`: it would be one more place a release has
+# to remember, and every catalogue would show a diff for every release that
+# changed nothing anybody translates.
+xgettext \
+    --language=C \
+    --from-code=UTF-8 \
+    --keyword \
+    --keyword=t \
+    --keyword=tn:1,2 \
+    --add-comments=Translators: \
+    --sort-by-file \
+    --package-name="$domain" \
+    --msgid-bugs-address=https://github.com/excelano/filebase/issues \
+    --output="$pot" \
+    $sources
+
+# xgettext writes `PACKAGE VERSION` into a header it was not given a version
+# for, which is a placeholder no reader benefits from.
+sed -i "s/^\"Project-Id-Version: $domain VERSION/\"Project-Id-Version: $domain/" "$pot"
+
+# **And it writes `charset=CHARSET`, which is a trap when every message is
+# ASCII.** `msginit` reads that placeholder, sees nothing but ASCII, and writes
+# `charset=ASCII` into the new catalogue — after which the first German word
+# makes `msgfmt` refuse the file with *invalid multibyte sequence*. Declared
+# here so no catalogue starts life wrong.
+sed -i 's/charset=CHARSET/charset=UTF-8/' "$pot"
+
+# Every catalogue beside the template. `msgmerge` is the whole reason this
+# project speaks `.po`: where a message's English has changed, it finds the
+# entry the new text descended from, carries the old German over, and marks it
+# `#, fuzzy` — and `potext` refuses to show a fuzzy entry, so the window falls
+# back to English until a person has looked at it. A translation is never
+# silently wrong; it is either current or visibly absent.
+for catalogue in po/*.po; do
+    [ -e "$catalogue" ] || continue
+    msgmerge --update --backup=none --previous "$catalogue" "$pot"
+    # Syntax is caught here, before a commit, because `potext` cannot report it
+    # at run time: a catalogue is compiled into the binary and an application
+    # that refuses to start over a stray quote in a translation would be worse
+    # than one that shows English.
+    msgfmt --check --output-file=/dev/null "$catalogue"
+    printf '%s: ' "$catalogue"
+    msgfmt --statistics --output-file=/dev/null "$catalogue" 2>&1
+done

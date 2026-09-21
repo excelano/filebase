@@ -25,11 +25,14 @@
 # field for them: Partner Center keeps the website, the privacy policy and the
 # support contact against the product.
 #
-# **English only, deliberately.** The German half of a listing takes its
-# terminology from the application's own catalogue, so that a listing does not
-# teach a reader a word the window has no use for. Filebase has no `po/` yet.
-# German is added here in the same pass that adds it to the application, and
-# `store_locales` in ship.conf gains `de-de` at the same time.
+# **Both languages, and the German takes its terminology from `po/de.po`.** A
+# listing that taught a reader a word the window has no use for would be worse
+# than an English one: a Nutzlast is what the window calls a payload, and so it
+# is what the listing calls one. The German is not a translation of the English
+# line for line — German runs about a third longer, and the short description
+# has a hard limit of 500 — so it says the same things in its own length.
+#
+# `store_locales` in ship.conf gains `de-de` when the store targets land.
 
 [locales."en-us"]
 website = "https://excelano.com/filebase/"
@@ -114,3 +117,79 @@ keywords = [
   "file manager",
   "TOML",
 ]
+
+[locales."de-de"]
+website = "https://excelano.com/filebase/"
+support = "https://excelano.com/filebase/#support"
+privacy = "https://excelano.com/legal/#filebase"
+description = """
+Ein Slipcase-Container ist eine Datei mit ihrer Beschreibung darin: ein Dokument beliebiger Art, gepackt mit einer kleinen Textdatei, die sagt, was es ist. Die Beschreibung reist mit dem Dokument und ist noch da, nachdem die Datei kopiert, umbenannt, verschickt und abgelegt wurde.
+
+Sobald ein Ordner ein paar Hundert davon enthält, lautet die Frage nicht mehr, was in dieser Datei steht, sondern welche dieser Dateien dies sagen. Ein Dateimanager kann das nicht beantworten. Für ihn sind es alles Archive mit demselben Symbol.
+
+Filebase beantwortet sie.
+
+WAS SIE TUN
+
+Auf einen Ordner zeigen und eine Frage stellen:
+
+select @path, title, governance.owner where status = "draft" or tags contains "legal"
+
+Was geantwortet hat, kommt als Zeilen zurück: eine Zeile je Container, eine Spalte je Metadatenschlüssel. Setzen Sie den Haken bei rekursiv, und es steigt in Unterordner ab; lassen Sie ihn weg, und es tut es nicht.
+
+Wählen Sie eine Zeile, und dieser Container steht neben der Tabelle: wie seine Nutzlast heißt, wie groß sie ist, und seine ganze Beschreibung als lesbarer Baum. Ein Druck auf Nutzlast öffnen gibt das Dokument an das Programm weiter, das Ihr System für diese Art von Datei vorgesehen hat.
+
+WAS DIE SPRACHE IST
+
+SlipQL entlehnt seine Klauseln von SQL und seine Literale von TOML. Wer eine Beschreibung schreiben kann, kann sie also abfragen, ohne eine zweite Art zu lernen, ein Datum zu schreiben oder eine Zeichenkette zu setzen. Der gewählte Ordner liefert die from-Klausel, eine Abfrage kann sie also weglassen. select * gibt jeden Schlüssel über alle Container zurück, die geantwortet haben, und ist damit der schnellste Weg zu erfahren, wonach sich in einem Ordner überhaupt fragen lässt.
+
+Ein Schlüssel, den ein Container nicht hat, kommt als leere Zelle zurück, statt die Abfrage scheitern zu lassen: diese Beschreibungen schreiben Menschen, und keine zwei Ordner sind sich einig, was hineingehört.
+
+WAS ES SAGT, DASS ES NICHT GETAN HAT
+
+Eine Datei, die es nicht lesen konnte, wird übersprungen und unter den Zeilen genannt. Ein Vergleich über Typgrenzen wird gezählt und genannt: nach Seiten über zehn zu fragen, wo bei einem Container pages das Wort „many“ ist, ist weder wahr noch falsch, und sonst wäre das Fehlen der Zeile der einzige Hinweis darauf. Eine kurze Antwort, die nicht sagt, dass sie kurz ist, ist eine falsche Antwort.
+
+WAS ES NICHT TUT
+
+Es schreibt nicht. Es gibt kein Speichern darin und keinen Weg hindurch, der einen Container verändert; die Beschreibungen werden gezeigt und nicht bearbeitet. Slipcase Desktop ist der Editor.
+
+Es führt keinen Index und keine Bibliothek. Jede Abfrage ist ein frischer Durchlauf, die Antwort ist also das, was jetzt auf der Festplatte steht: nichts zu importieren, nichts neu aufzubauen, nichts, das veralten kann.
+
+Es baut keinerlei Netzwerkverbindung auf. Kein Server dahinter, kein Konto anzulegen, keine Analyse, keine Telemetrie, keine Absturzberichte. Es speichert nichts: keine Einstellungsdatei, keine Liste zuletzt geöffneter Ordner, keinen Zwischenspeicher.
+
+QUELLOFFEN
+
+In Rust geschrieben, kostenlos und quelloffen unter der MIT-Lizenz, auf github.com/excelano/filebase. Die Abfrage-Engine ist ein eigenes Crate, auf dem jeder aufbauen kann, und das Format ist eine veröffentlichte Spezifikation, die sich mit jedem ZIP-Werkzeug lesen lässt.
+"""
+
+[locales."de-de".apple]
+name = "Filebase"
+subtitle = "Dokumentordner abfragen"
+promotional-text = "Auf einen Ordner voller Slipcase-Container zeigen, fragen, welche davon sagen, was Sie suchen, und die Antwort als Zeilen lesen."
+keywords = "Slipcase,slpc,Metadaten,Abfrage,Suche,Dokumente,Ordner,Container,SlipQL,TOML"
+
+[locales."de-de".microsoft]
+name = "Filebase"
+short-description = """
+Ein Slipcase-Container ist eine Datei mit ihrer Beschreibung darin, und die Beschreibung reist mit. Sobald ein Ordner ein paar Hundert enthält, lautet die Frage, welche davon dies sagen, und ein Dateimanager kann sie nicht beantworten.
+
+Zeigen Sie Filebase auf den Ordner und fragen Sie. Was antwortet, kommt als Zeilen zurück, eine je Container, eine Spalte je Schlüssel.
+
+Es schreibt nie einen Container, führt keinen Index und baut keine Netzwerkverbindung auf.
+"""
+features = [
+  "Stellen Sie einem Ordner voller Slipcase-Container eine Frage und lesen Sie die Antwort als Zeilen: eine Zeile je Container, eine Spalte je Metadatenschlüssel.",
+  "SlipQL entlehnt seine Klauseln von SQL und seine Literale von TOML: Wer eine Beschreibung schreiben kann, kann sie auch abfragen.",
+  "Zeilen erscheinen, sobald der Durchlauf sie findet, ein großer Ordner beginnt also sofort zu antworten und nicht erst am Ende.",
+  "In Unterordner absteigen oder nicht: rekursiv ist ein Häkchen und standardmäßig aus.",
+  "Wählen Sie eine Zeile, um zu sehen, wie die Nutzlast heißt, wie groß sie ist und wie die ganze Beschreibung des Containers als Baum aussieht.",
+  "Öffnen Sie die Nutzlast mit dem Programm, das Ihr System für diese Art von Datei vorgesehen hat.",
+  "Ein Schlüssel, den ein Container nicht hat, ist eine leere Zelle und keine gescheiterte Abfrage, denn diese Beschreibungen schreiben Menschen.",
+  "Eine Datei, die nicht gelesen werden konnte, wird übersprungen und gemeldet, ebenso ein Vergleich über Typgrenzen.",
+  "Es schreibt nie einen Container. Es gibt kein Speichern und keinen Weg hindurch, der einen verändert.",
+  "Kein Index und keine Bibliothek: Jede Abfrage ist ein frischer Durchlauf, die Antwort ist also das, was jetzt auf der Festplatte steht.",
+  "Keinerlei Netzwerkverbindung. Kein Konto, keine Analyse, keine Telemetrie, keine Absturzberichte.",
+  "Speichert nichts auf Ihrer Festplatte: keine Einstellungsdatei, keine Liste zuletzt geöffneter Ordner, keinen Zwischenspeicher.",
+  "In Rust geschrieben und quelloffen unter der MIT-Lizenz, ebenso wie das Format, das es liest.",
+]
+keywords = ["Slipcase", "slpc", "Metadaten", "Dokumentsuche", "Abfrage", "Dateimanager", "TOML"]

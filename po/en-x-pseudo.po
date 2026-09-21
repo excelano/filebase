@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the filebase package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: filebase\n"
+"Report-Msgid-Bugs-To: https://github.com/excelano/filebase/issues\n"
+"POT-Creation-Date: 2026-09-21 11:09-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: none\n"
+"Language: en-x-pseudo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/detail.rs:96
+msgid "{n} byte"
+msgid_plural "{n} bytes"
+msgstr[0] "[{n} byté ····]"
+msgstr[1] "[{n} bytéš ····]"
+
+#: src/detail.rs:113
+msgid "{size} {unit} ({n} bytes)"
+msgstr "[{size} {unit} ({n} bytéš) ···········]"
+
+#: src/main.rs:237
+msgid "{path} is not a folder."
+msgstr "[{path} íš ñöt ä földér. ··········]"
+
+#: src/main.rs:300
+msgid "Choose a folder"
+msgstr "[Chööšé ä földér ·······]"
+
+#: src/main.rs:331
+msgid "Cannot make somewhere to put the payload: {why}"
+msgstr "[Cäññöt mäké šöméwhéré tö püt thé päylöäd: {why} ···················]"
+
+#: src/main.rs:343
+msgid "Nothing opened it: {why}"
+msgstr "[Nöthíñg öpéñéd ít: {why} ··········]"
+
+#: src/main.rs:350
+msgid "Cannot read the payload: {why}"
+msgstr "[Cäññöt réäd thé päylöäd: {why} ·············]"
+
+#: src/main.rs:423
+msgid "Open folder…"
+msgstr "[Öpéñ földér… ······]"
+
+#: src/main.rs:427
+msgid "recursive"
+msgstr "[récüršívé ····]"
+
+#: src/main.rs:428
+msgid "Descend into subdirectories."
+msgstr "[Déšcéñd íñtö šübdíréctöríéš. ············]"
+
+#: src/main.rs:440
+msgid "No folder chosen."
+msgstr "[Nö földér chöšéñ. ·······]"
+
+#: src/main.rs:450
+msgid "Run"
+msgstr "[Rüñ ··]"
+
+#: src/main.rs:484
+msgid "No query has been run."
+msgstr "[Nö qüéry häš bééñ rüñ. ·········]"
+
+#: src/main.rs:498
+msgid "What the scan noticed"
+msgstr "[Whät thé šcäñ ñötícéd ·········]"
+
+#: src/main.rs:513
+msgid "Choose a folder, then run a query."
+msgstr "[Chööšé ä földér, théñ rüñ ä qüéry. ··············]"
+
+#: src/main.rs:520
+msgid "Scanning…"
+msgstr "[Scäññíñg… ·····]"
+
+#: src/main.rs:522
+msgid "Nothing matched."
+msgstr "[Nöthíñg mätchéd. ·······]"
+
+#: src/main.rs:583
+msgid "Select a row."
+msgstr "[Séléct ä röw. ······]"
+
+#: src/main.rs:598
+msgid "Payload"
+msgstr "[Päylöäd ···]"
+
+#: src/main.rs:603
+msgid "This build cannot decode it: {why}"
+msgstr "[Thíš büíld cäññöt décödé ít: {why} ··············]"
+
+#: src/main.rs:614
+msgid "Open payload"
+msgstr "[Öpéñ päylöäd ·····]"
+
+#: src/main.rs:621
+msgid "Metadata"
+msgstr "[Métädätä ····]"
+
+#: src/query.rs:266 src/query.rs:334
+msgid "{n} row"
+msgid_plural "{n} rows"
+msgstr[0] "[{n} röw ···]"
+msgstr[1] "[{n} röwš ····]"
+
+#: src/query.rs:270
+msgid "{rows} so far…"
+msgstr "[{rows} šö fär… ·······]"
+
+#: src/query.rs:278
+msgid "stopped at {most}; narrow the query or add a limit"
+msgstr ""
+"[štöppéd ät {most}; ñärröw thé qüéry ör ädd ä límít ·····················]"
+
+#: src/query.rs:285
+msgid "{n} skipped"
+msgid_plural "{n} skipped"
+msgstr[0] "[{n} škíppéd ·····]"
+msgstr[1] "[{n} škíppéd ·····]"
+
+#: src/query.rs:293
+msgid "{n} comparison across types"
+msgid_plural "{n} comparisons across types"
+msgstr[0] "[{n} cömpäríšöñ äcröšš typéš ···········]"
+msgstr[1] "[{n} cömpäríšöñš äcröšš typéš ············]"
+
+#: src/query.rs:321
+msgid "skipped {path}: {reason}"
+msgstr "[škíppéd {path}: {reason} ··········]"
+
+#: src/query.rs:338
+msgid "{column}: {found} in {rows}, {against} in the query; not matched"
+msgstr ""
+"[{column}: {found} íñ {rows}, {against} íñ thé qüéry; ñöt mätchéd "
+"··························]"

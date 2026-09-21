@@ -1,0 +1,147 @@
+# German catalogue for Filebase.
+# Copyright (C) 2026 Excelano LLC
+# This file is distributed under the same licence as the filebase package.
+#
+# The Slipcase vocabulary follows slipcase-desktop's German so that a person
+# who uses both reads one set of words: a payload is a Nutzlast, a container
+# is a Container, and an ellipsis takes the space German typography puts
+# before it.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: filebase\n"
+"Report-Msgid-Bugs-To: https://github.com/excelano/filebase/issues\n"
+"POT-Creation-Date: 2026-09-21 11:09-0500\n"
+"PO-Revision-Date: 2026-09-21 11:00+0000\n"
+"Last-Translator: David M. Anderson\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/detail.rs:96
+msgid "{n} byte"
+msgid_plural "{n} bytes"
+msgstr[0] "{n} Byte"
+msgstr[1] "{n} Byte"
+
+#: src/detail.rs:113
+msgid "{size} {unit} ({n} bytes)"
+msgstr "{size} {unit} ({n} Byte)"
+
+#: src/main.rs:237
+msgid "{path} is not a folder."
+msgstr "{path} ist kein Ordner."
+
+#: src/main.rs:300
+msgid "Choose a folder"
+msgstr "Ordner wählen"
+
+#: src/main.rs:331
+msgid "Cannot make somewhere to put the payload: {why}"
+msgstr "Kann keinen Ort für die Nutzlast anlegen: {why}"
+
+#: src/main.rs:343
+msgid "Nothing opened it: {why}"
+msgstr "Nichts hat sie geöffnet: {why}"
+
+#: src/main.rs:350
+msgid "Cannot read the payload: {why}"
+msgstr "Kann die Nutzlast nicht lesen: {why}"
+
+#: src/main.rs:423
+msgid "Open folder…"
+msgstr "Ordner öffnen …"
+
+#: src/main.rs:427
+msgid "recursive"
+msgstr "rekursiv"
+
+#: src/main.rs:428
+msgid "Descend into subdirectories."
+msgstr "Auch Unterordner einbeziehen."
+
+#: src/main.rs:440
+msgid "No folder chosen."
+msgstr "Kein Ordner gewählt."
+
+#: src/main.rs:450
+msgid "Run"
+msgstr "Ausführen"
+
+#: src/main.rs:484
+msgid "No query has been run."
+msgstr "Es wurde noch keine Abfrage ausgeführt."
+
+#: src/main.rs:498
+msgid "What the scan noticed"
+msgstr "Was beim Durchsuchen auffiel"
+
+#: src/main.rs:513
+msgid "Choose a folder, then run a query."
+msgstr "Einen Ordner wählen, dann eine Abfrage ausführen."
+
+#: src/main.rs:520
+msgid "Scanning…"
+msgstr "Wird durchsucht …"
+
+#: src/main.rs:522
+msgid "Nothing matched."
+msgstr "Keine Treffer."
+
+#: src/main.rs:583
+msgid "Select a row."
+msgstr "Eine Zeile auswählen."
+
+#: src/main.rs:598
+msgid "Payload"
+msgstr "Nutzlast"
+
+#: src/main.rs:603
+msgid "This build cannot decode it: {why}"
+msgstr "Diese Fassung kann sie nicht dekodieren: {why}"
+
+#: src/main.rs:614
+msgid "Open payload"
+msgstr "Nutzlast öffnen"
+
+#: src/main.rs:621
+msgid "Metadata"
+msgstr "Metadaten"
+
+#: src/query.rs:266 src/query.rs:334
+msgid "{n} row"
+msgid_plural "{n} rows"
+msgstr[0] "{n} Zeile"
+msgstr[1] "{n} Zeilen"
+
+#: src/query.rs:270
+msgid "{rows} so far…"
+msgstr "{rows} bisher …"
+
+#: src/query.rs:278
+msgid "stopped at {most}; narrow the query or add a limit"
+msgstr "bei {most} angehalten; die Abfrage eingrenzen oder ein Limit setzen"
+
+#: src/query.rs:285
+msgid "{n} skipped"
+msgid_plural "{n} skipped"
+msgstr[0] "{n} übersprungen"
+msgstr[1] "{n} übersprungen"
+
+#: src/query.rs:293
+msgid "{n} comparison across types"
+msgid_plural "{n} comparisons across types"
+msgstr[0] "{n} Vergleich über Typgrenzen"
+msgstr[1] "{n} Vergleiche über Typgrenzen"
+
+#: src/query.rs:321
+msgid "skipped {path}: {reason}"
+msgstr "{path} übersprungen: {reason}"
+
+#: src/query.rs:338
+msgid "{column}: {found} in {rows}, {against} in the query; not matched"
+msgstr ""
+"{column}: {found} in {rows}, {against} in der Abfrage; nicht verglichen"

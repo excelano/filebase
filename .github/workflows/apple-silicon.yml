@@ -120,6 +120,7 @@ jobs:
           set -eu
           cargo install slipcase --quiet
           ./packaging/demo-corpus.sh
+          ./packaging/demo-corpus.sh --lang de
 
       # A folder arrives as an argument here, not as an Apple Event: this
       # application declares no document type, so there is nothing for Launch
@@ -191,14 +192,15 @@ jobs:
       # `shots.sh` carries the recipes and is the same command that retakes them
       # by hand; everything around it is the org's.
       #
-      # English only, because the listing is English only: German is added to
-      # the application, the listing and this line in one pass, and `shots.sh`
-      # refuses a language it has no set for rather than photographing an
-      # English window under a German heading.
+      # Both languages, because the listing is in both. `shots.sh` refuses a
+      # language it has no set for rather than photographing an English window
+      # under a German heading, and it opens a German corpus for the German
+      # set — this application's frames are almost entirely container metadata,
+      # so the window's language alone would not make a German frame.
       - name: The Store screenshots
         if: inputs.screenshots && inputs.screenshots != 'no'
         uses: excelano/.github/.github/actions/mac-store-screenshots@main
         with:
           app: dist/Filebase.app
           mode: ${{ inputs.screenshots }}
-          languages: en
+          languages: en de

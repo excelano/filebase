@@ -24,11 +24,11 @@
 
 /// The language the window draws in.
 ///
-/// The catalogue list is empty: `po/` arrives with the German pass, and until
-/// it does every lookup hands back the English it was given. The call sites are
-/// written through [`t`](i18n::t) from the first commit anyway, because
-/// wrapping every sentence afterwards is the expensive half of translating an
-/// application and an empty catalogue costs nothing.
+/// One catalogue for the whole crate, declared here rather than in the binary
+/// because `detail` and `query` draw sentences of their own and a second
+/// catalogue beside this one would be a second thing to keep in step. The
+/// binary chooses the language and hands this the list; `po/` holds the
+/// catalogues and `po/update-po.sh` keeps them level with the source.
 pub mod i18n {
     pub use potext::fill;
 

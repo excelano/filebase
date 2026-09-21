@@ -50,15 +50,14 @@ param(
     [switch] $Reference,
     [string] $OutDir,
     # Which language's set to take, and the subdirectory it lands in:
-    # `Take-Shots` turns this into `en-US`, and the Store files a frame by the
-    # locale in its path. A set written loose is a set `ship` refuses.
+    # `Take-Shots` turns this into `en-US` or `de-DE`, and the Store files a
+    # frame by the locale in its path. A set written loose is a set `ship`
+    # refuses.
     #
-    # English only, and refusing anything else rather than falling back, for
-    # the reason `packaging/macos/shots.sh` gives: the alternative is a German
-    # listing showing an English window, which is what happened to Slipcase
-    # Desktop's German customers. German is added to the application, to
-    # store-listing.toml and to both recipes in one pass.
-    [ValidateSet('en')]
+    # Refusing a language this file has no set for, rather than falling back,
+    # is deliberate: the alternative is a German listing showing an English
+    # window, which is what happened to Slipcase Desktop's German customers.
+    [ValidateSet('en', 'de')]
     [string] $Lang = 'en'
 )
 
@@ -79,7 +78,16 @@ $HEIGHT = 768
 # rather than a document, because that is what this application opens; the
 # driver passes it as an argument, since Filebase declares no file type for the
 # shell to route.
-$CORPUS = Join-Path $root 'dist\corpus'
+# Two corpora, because this application's frames are almost entirely container
+# *metadata*: a German window over English titles, owners and tags would be a
+# German frame of mostly English pixels. `packaging/demo-corpus.sh` builds both
+# and says why the German file names sort where the English ones do, which is
+# what lets the row coordinates below serve either set.
+$CORPUS = if ($Lang -eq 'de') {
+    Join-Path $root 'dist\corpus-de'
+} else {
+    Join-Path $root 'dist\corpus'
+}
 
 # The executable, launched directly with the folder as an argument rather than
 # through the shell. The siblings use `-Launch shell` because their document's
@@ -171,7 +179,13 @@ function Get-Shots {
 #
 # Copied as a tree, not as a flat list of files: the corpus is three levels
 # deep, which is the whole point of the recursive tick box.
-$STAGED = Join-Path $env:USERPROFILE 'Documents\Contracts'
+# The folder's own name is translated too. It is the widest thing in the folder
+# bar and the first thing read in the frame.
+$STAGED = if ($Lang -eq 'de') {
+    Join-Path $env:USERPROFILE 'Documents\Verträge'
+} else {
+    Join-Path $env:USERPROFILE 'Documents\Contracts'
+}
 
 if (-not (Test-Path $CORPUS)) {
     throw "shots.ps1: no corpus at $CORPUS; run packaging/demo-corpus.sh"
