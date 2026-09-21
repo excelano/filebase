@@ -80,6 +80,11 @@ OUTDIR="${root}/dist/screenshots"
 
 # --- the shots --------------------------------------------------------------
 
+# `$RECURSIVE` is set by `for_language` below rather than here, because it is
+# the one coordinate that differs between the two sets. `take-shots.sh` calls
+# that before it calls this, so the value is in force by the time a recipe is
+# read.
+#
 # One shot to a line: name, then the actions that put the window into the state
 # being photographed, in the order they are given.
 #
@@ -93,7 +98,22 @@ OUTDIR="${root}/dist/screenshots"
 # re-measure when the window changes, rather than adjusting a number until a
 # shot looks right. That first frame is also what caught the detail pane
 # rendering at 96 pixels where 360 was asked for.
-RECURSIVE='113,43'     # the tick box in the folder bar
+# **The tick box moves with the language, and nothing else here does.** It sits
+# just right of `Open folder…`, whose German is `Ordner öffnen …` and about
+# seventeen pixels wider, so the English coordinate lands *inside the button* in
+# a German window: measured on 2026-09-21, the button spans 8–115 in German and
+# 8–98 in English, and the box 124–137 against 107–120. The first German set
+# opened a file chooser with that click, which then swallowed the query and the
+# selection — and the frames came back the right size, with a row in them, and
+# `Select a row.` in the pane. That is the shape of this defect: it does not
+# fail, it photographs the wrong window.
+#
+# The query box, the first row and the richest row need no such treatment. The
+# box is wide enough that 400 is inside it in both, and the rows are below both
+# bars at a height the language does not change — `demo-corpus.sh` says why the
+# German containers sort into the same five positions.
+RECURSIVE_EN='113,43'
+RECURSIVE_DE='130,43'
 QUERY_BOX='400,77'     # anywhere inside the query box
 FIRST_ROW='115,135'    # 2025/invoice-1183.pdf.slpc, the first row the scan finds
 RICHEST_ROW='115,219'  # master-services-agreement.pdf.slpc, the fullest description
@@ -170,8 +190,12 @@ stage_corpus() {
 
 for_language() {
     case "$1" in
-        en|en-US|en-us) stage_corpus "$CORPUS_EN" "$STAGED_EN"; document=$STAGED_EN ;;
-        de|de-DE|de-de) stage_corpus "$CORPUS_DE" "$STAGED_DE"; document=$STAGED_DE ;;
+        en|en-US|en-us)
+            stage_corpus "$CORPUS_EN" "$STAGED_EN"
+            document=$STAGED_EN; RECURSIVE=$RECURSIVE_EN ;;
+        de|de-DE|de-de)
+            stage_corpus "$CORPUS_DE" "$STAGED_DE"
+            document=$STAGED_DE; RECURSIVE=$RECURSIVE_DE ;;
         *) echo "shots.sh: no set is written for $1" >&2; exit 2 ;;
     esac
 }

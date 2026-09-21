@@ -114,7 +114,21 @@ if (-not $OutDir) { $OutDir = Join-Path $root 'dist\screenshots' }
 # These are Windows' own numbers and are one pixel off the macOS set in places:
 # the title bar is a different height, so everything below it shifts. That is
 # why the two recipes carry their own coordinates rather than sharing a table.
-$RECURSIVE = '114,44'     # the tick box in the folder bar
+# **The tick box moves with the language, and nothing else here does.** It sits
+# just right of `Open folder…`, whose German is `Ordner öffnen …` and about
+# seventeen pixels wider, so the English coordinate lands *inside the button* in
+# a German window: measured on 2026-09-21, the button spans 9-116 in German and
+# 9-99 in English, and the box 125-138 against 108-121. The first German set
+# opened a file chooser with that click, which then swallowed the query and the
+# selection - and the frames came back the right size, with a row in them, and
+# `Eine Zeile auswaehlen.` in the pane. That is the shape of this defect: it
+# does not fail, it photographs the wrong window.
+#
+# The query box, the first row and the richest row need no such treatment. The
+# box is wide enough that 400 is inside it in both, and the rows are below both
+# bars at a height the language does not change - `demo-corpus.sh` says why the
+# German containers sort into the same five positions.
+$RECURSIVE = if ($Lang -eq 'de') { '131,44' } else { '114,44' }
 $QUERY_BOX = '400,78'     # anywhere inside the query box
 $FIRST_ROW = '115,136'    # 2025\invoice-1183.pdf.slpc, the first row the scan finds
 $RICHEST_ROW = '115,220'  # master-services-agreement.pdf.slpc, the fullest description
