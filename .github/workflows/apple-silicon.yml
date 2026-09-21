@@ -49,8 +49,13 @@ on:
         type: choice
         options: ['no', 'reference', 'full']
 
+# `write`, because the release-binary step uploads the universal binary to the
+# release with `gh release upload`. It was `read` on the first tag and that step
+# built a correct x86_64+arm64 binary and then failed with
+# `HTTP 403: Resource not accessible by integration` — a permissions refusal
+# that reads like a credentials problem. windows.yml had it right.
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: apple-silicon-${{ github.event.release.tag_name || inputs.tag || github.ref }}

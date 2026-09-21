@@ -2,3 +2,6 @@
 /dist
 Cargo.lock.orig
 *.local.md
+
+# The scratch file a session leaves behind, as slipql keeps it.
+next.txt
