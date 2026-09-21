@@ -49,7 +49,7 @@ slpc = { version = "0.3.10", features = ["fs"] }
 # behind; this crate has its own of each. Its `egui` is the one `eframe`
 # re-exports and its `toml_edit` is the one `slpc` re-exports, and both have to
 # be: this crate hands a `DocumentMut` from one to the other.
-flyleaf = { version = "0.2", default-features = false }
+flyleaf = { version = "0.2.7", default-features = false }
 # The language the window draws in, and the reader for the `.po` catalogues.
 # There are none yet — `po/` arrives with the German pass — and the call sites
 # are written through `t` from the first commit anyway, because wrapping every

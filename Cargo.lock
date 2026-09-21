@@ -1095,9 +1095,9 @@ dependencies = [
 
 [[package]]
 name = "flyleaf"
-version = "0.2.5"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f4a34137fe223f79d8da55de94ee02a179bf20eeee883164a21cf098b146242"
+checksum = "92fbda24b9ff62ee32cca62fe2170f9c0d021568eafc6602a763b31c7074e0cd"
 dependencies = [
  "egui",
  "flyleaf-core",
@@ -1106,9 +1106,9 @@ dependencies = [
 
 [[package]]
 name = "flyleaf-core"
-version = "0.2.5"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b1638c1441b9cf62ef5c263b043f1f41713fadad5056fb142729bd14be81314"
+checksum = "7d8165bce3ec113deada48cf74ac09cf9be1a2287219647faa994d07e3b41f0c"
 dependencies = [
  "objc2 0.6.4",
  "objc2-foundation 0.3.2",

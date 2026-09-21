@@ -30,6 +30,22 @@ impl flyleaf::Policy for ReadOnly {
         true
     }
 
+    /// Nothing may be added either.
+    ///
+    /// `protected` answers for the keys that exist; this answers for the ones
+    /// that do not. A tree that is not sealed draws `Add`, `add a key` and the
+    /// kind picker beside every table, and those controls write into the
+    /// in-memory document — an edit with no save beneath it, which is the thing
+    /// `protected` exists to prevent, arriving through the one door it does not
+    /// cover.
+    ///
+    /// Sealed at every path, for the reason every path is protected: a tree
+    /// where one table accepted a new key and the rest did not is harder to
+    /// reason about than either.
+    fn sealed(&self, _path: &[String]) -> bool {
+        true
+    }
+
     /// How a protected string reads.
     ///
     /// SPEC §3 requires a member name be shown escaped, and `payload.file` is a
@@ -67,6 +83,21 @@ mod tests {
             vec!["slipcase_version".to_owned()],
         ] {
             assert!(ReadOnly.protected(&path), "{path:?} should not be editable");
+        }
+    }
+
+    /// The other half of `nothing_is_editable`. `protected` answers for the
+    /// keys a container has; this answers for the ones somebody could give it,
+    /// and an unsealed table is the one place a window with no save in it still
+    /// offers an edit.
+    #[test]
+    fn nothing_can_be_added() {
+        for path in [
+            vec![],
+            vec!["governance".to_owned()],
+            vec!["tags".to_owned()],
+        ] {
+            assert!(ReadOnly.sealed(&path), "{path:?} should accept nothing new");
         }
     }
 
