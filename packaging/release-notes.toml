@@ -1,0 +1,34 @@
+# What this release tells the stores it changed, in every language the
+# listing is in. One file, every language, because a translation is reviewed
+# beside its source.
+#
+# The version is checked against the release being cut: notes left from last
+# time stop the release rather than reaching a listing. A language the listing
+# has and this file does not is also a refusal — a listing saying something
+# nobody wrote is worse than a release that stops.
+#
+# One language today. German is added to the application, to store-listing.toml
+# and to this file in one pass; adding it here alone would put German in a
+# listing whose window is English.
+#
+# The limit is 1500 characters a locale.
+#
+# Nothing else reads this. The GitHub release, the Debian changelog and the
+# AppStream entry take commit subjects.
+#
+# Author: David M. Anderson
+# Built with AI assistance (Claude, Anthropic)
+
+version = "0.1.2"
+
+[locales."en-us"]
+whats-new = """
+The first release. Point Filebase at a folder of Slipcase containers and ask \
+which of them say what you are looking for; what answers comes back as rows, \
+one per container and one column per metadata key. Select a row to read that \
+container's whole description beside the table, and hand its document to \
+whatever opens that kind of file.
+
+It never writes a container, keeps no index, and makes no network connection \
+of any kind.
+"""
