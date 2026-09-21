@@ -48,7 +48,18 @@ param(
     # the coordinates below get measured: take it, open it, read the pixel of
     # each control off it, and fill the constants in.
     [switch] $Reference,
-    [string] $OutDir
+    [string] $OutDir,
+    # Which language's set to take, and the subdirectory it lands in:
+    # `Take-Shots` turns this into `en-US`, and the Store files a frame by the
+    # locale in its path. A set written loose is a set `ship` refuses.
+    #
+    # English only, and refusing anything else rather than falling back, for
+    # the reason `packaging/macos/shots.sh` gives: the alternative is a German
+    # listing showing an English window, which is what happened to Slipcase
+    # Desktop's German customers. German is added to the application, to
+    # store-listing.toml and to both recipes in one pass.
+    [ValidateSet('en')]
+    [string] $Lang = 'en'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -170,4 +181,4 @@ New-Item -ItemType Directory -Force -Path (Split-Path $STAGED) | Out-Null
 Copy-Item -Recurse -Force $CORPUS $STAGED
 
 Take-Shots -Launch @('exe', $EXE, $STAGED) -Process $PROCESS `
-    -Width $WIDTH -Height $HEIGHT -OutDir $OutDir -Reference:$Reference
+    -Width $WIDTH -Height $HEIGHT -OutDir $OutDir -Lang $Lang -Reference:$Reference
