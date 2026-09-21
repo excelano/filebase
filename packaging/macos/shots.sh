@@ -81,42 +81,54 @@ OUTDIR="${root}/dist/screenshots"
 #   --type TEXT    type
 #   --key NAME     one key, optionally with modifiers: cmd+a, return
 #
-# **The coordinates below are not filled in yet.** The reference frame has not
-# been taken, and a coordinate guessed off a description of a window is a
-# coordinate that photographs the wrong thing — which is worse than no set,
-# because it passes. Dispatch `apple-silicon.yml` with `screenshots: reference`,
-# measure, and replace the three `--click` pairs.
+# **Measured off a reference frame**, taken by dispatching `apple-silicon.yml`
+# with `screenshots: reference` at exactly the size declared above. Retake and
+# re-measure when the window changes, rather than adjusting a number until a
+# shot looks right. That first frame is also what caught the detail pane
+# rendering at 96 pixels where 360 was asked for.
+RECURSIVE='113,43'     # the tick box in the folder bar
+QUERY_BOX='400,77'     # anywhere inside the query box
+FIRST_ROW='115,135'    # 2025/invoice-1183.pdf.slpc, the first row the scan finds
+RICHEST_ROW='115,219'  # master-services-agreement.pdf.slpc, the fullest description
+
+# The two queries the frames are of. Row order is the scan's and was read off a
+# real run rather than assumed: invoice, field-notes, q3-report, renewal,
+# master-services-agreement. field-notes is the one with no governance.owner,
+# so its empty cell sits in the middle of every frame below.
+QUERY='select @path, title, status, governance.owner'
+QUERY_NOTICES='select @path, title, pages where pages > 10'
 shots() {
-    # The answer to a question, with a row selected: rows filling the table, a
-    # column per metadata key, and the container on the right. This is the
-    # frame that has to carry the listing, so it is first.
-    #
-    # Actions: tick recursive, type the query, run it, select a row.
+    # The answer to a question, with a row selected: five rows where the tick
+    # box was the only thing touched, a column per metadata key, and the
+    # container on the right. This frame has to carry the listing, so it is
+    # first. A frame of Filebase with no query run is a frame of an empty
+    # window, which is this application's version of the trap Apple rejected
+    # segler's first set for.
     shot 01-a-folder-answering \
-        --click RECURSIVE_XY \
-        --click QUERY_BOX_XY --key cmd+a \
-        --type 'select @path, title, status, governance.owner' --key return \
-        --click FIRST_ROW_XY
+        --click $RECURSIVE \
+        --click $QUERY_BOX --key cmd+a --type "$QUERY" --key return \
+        --click $FIRST_ROW
 
     # A container in full: the payload card and the whole description as a
-    # tree, beside the rows it came from. The empty `governance.owner` cell on
-    # the row above is visible in the same frame, which is the ad-hoc-metadata
-    # argument made in a picture rather than in a sentence.
+    # tree. The richest of the five is selected so the pane is not half empty,
+    # and field-notes' blank governance.owner is above it in the same frame.
     shot 02-a-container-in-full \
-        --click RECURSIVE_XY \
-        --click QUERY_BOX_XY --key cmd+a \
-        --type 'select @path, title, status, governance.owner' --key return \
-        --click FOURTH_ROW_XY
+        --click $RECURSIVE \
+        --click $QUERY_BOX --key cmd+a --type "$QUERY" --key return \
+        --click $RICHEST_ROW
 
-    # What the scan could not do, said out loud. The corpus has a container
-    # whose `pages` is a word where the rest are numbers, and a file named like
-    # a container that is not one, so this query produces both notices at once.
+    # What the scan could not do, under the count: a file it could not read and
+    # a comparison that crossed types, from a query that produces both at once.
+    #
+    # The fold is left shut. Opening it wants a coordinate that only exists once
+    # notices are on screen, and this file carries no guessed ones — the count
+    # line names both findings without it.
     shot 03-what-the-scan-noticed \
-        --click RECURSIVE_XY \
-        --click QUERY_BOX_XY --key cmd+a \
-        --type 'select @path, title, pages where pages > 10' --key return \
-        --click NOTICES_FOLD_XY
+        --click $RECURSIVE \
+        --click $QUERY_BOX --key cmd+a --type "$QUERY_NOTICES" --key return \
+        --click $FIRST_ROW
 }
+
 
 # --- the driving ------------------------------------------------------------
 
@@ -127,9 +139,27 @@ shots() {
 # pass. Refusing here rather than falling back is deliberate — the alternative
 # is a German listing showing an English window, which is what happened to
 # Slipcase Desktop's German customers.
+# Where the corpus is copied to before it is photographed, and why it is copied
+# at all: the folder bar shows the path it was given, and a store screenshot
+# reading /Users/runner/work/filebase/filebase/dist/corpus tells a customer
+# about a build machine. Under Documents it reads like somebody's own folder.
+#
+# **Staged here rather than through take-shots.sh's `staged_name`.** That does a
+# flat `cp "$src"/*`, which omits directories, and this corpus is three levels
+# deep — the whole point of the recursive tick box. `cp -R` of the folder itself
+# is what a tree needs.
+STAGED="${HOME}/Documents/Contracts"
+
+stage_corpus() {
+    [ -d "$CORPUS" ] || { echo "shots.sh: no corpus at ${CORPUS}; run packaging/demo-corpus.sh" >&2; exit 2; }
+    rm -rf "$STAGED"
+    mkdir -p "$(dirname "$STAGED")"
+    cp -R "$CORPUS" "$STAGED"
+}
+
 for_language() {
     case "$1" in
-        en|en-US|en-us) document=$CORPUS ;;
+        en|en-US|en-us) stage_corpus; document=$STAGED ;;
         de|de-DE|de-de)
             echo "shots.sh: no German set is written yet; the application has no German either" >&2
             exit 2 ;;

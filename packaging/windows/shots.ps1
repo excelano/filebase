@@ -82,22 +82,23 @@ if (-not $OutDir) { $OutDir = Join-Path $root 'dist\screenshots' }
 # The controls, by what they do rather than by where they are, so a recipe below
 # reads as the thing it is doing. Each is "X,Y" in the frame.
 #
-# **These are not filled in yet.** Every one is read off a reference frame, and
-# a coordinate guessed from a description of a window photographs the wrong
-# thing and passes while doing it. Take the frame, measure, and replace them:
+# **Measured off a reference frame**, taken by dispatching `windows.yml` with
+# `screenshots: reference` at exactly the size declared above. Retake and
+# re-measure when the window changes rather than adjusting a number until a shot
+# looks right.
 #
-#     powershell -ExecutionPolicy Bypass -File packaging\windows\shots.ps1 -Reference
-#
-$RECURSIVE = 'RECURSIVE_XY'      # the recursive tick box in the folder bar
-$QUERY_BOX = 'QUERY_BOX_XY'      # the query box
-$FIRST_ROW = 'FIRST_ROW_XY'      # the first row of the results table
-$FOURTH_ROW = 'FOURTH_ROW_XY'    # a row whose container has no governance.owner
-$NOTICES = 'NOTICES_FOLD_XY'     # the "What the scan noticed" fold, under the count
+# These are Windows' own numbers and are one pixel off the macOS set in places:
+# the title bar is a different height, so everything below it shifts. That is
+# why the two recipes carry their own coordinates rather than sharing a table.
+$RECURSIVE = '114,44'     # the tick box in the folder bar
+$QUERY_BOX = '400,78'     # anywhere inside the query box
+$FIRST_ROW = '115,136'    # 2025\invoice-1183.pdf.slpc, the first row the scan finds
+$RICHEST_ROW = '115,220'  # master-services-agreement.pdf.slpc, the fullest description
 
-# The two queries the frames are of. The first is the listing's own example; the
-# second is the one that makes both notices appear at once, because the corpus
-# has a container whose `pages` is a word and a file named like a container that
-# is not one.
+# The two queries the frames are of. Row order is the scan's and was read off a
+# real run: invoice, field-notes, q3-report, renewal, master-services-agreement.
+# field-notes is the one with no governance.owner, so its empty cell sits in the
+# middle of every frame below.
 $QUERY = 'select @path, title, status, governance.owner'
 $QUERY_NOTICES = 'select @path, title, pages where pages > 10'
 
@@ -112,37 +113,38 @@ $QUERY_NOTICES = 'select @path, title, pages where pages > 10'
 #   type TEXT     type
 #   key NAME      one key, optionally with modifiers: ctrl+a, return
 function Get-Shots {
-    # The answer to a question, with a row selected: rows filling the table, a
-    # column per metadata key, and the container on the right. This is the frame
-    # that has to carry the listing, so it is first.
-    #
-    # A frame of Filebase with no query run is a frame of an empty window, which
-    # is this application's version of the trap Apple rejected segler's first
-    # set for: nothing selected, so the pane reads as a prompt in every shot.
+    # The answer to a question, with a row selected: five rows where the tick
+    # box was the only thing touched, a column per metadata key, and the
+    # container on the right. This frame has to carry the listing, so it is
+    # first. A frame of Filebase with no query run is a frame of an empty
+    # window, which is this application's version of the trap Apple rejected
+    # segler's first set for.
     Shot '01-a-folder-answering' @(
         "click $RECURSIVE",
         "click $QUERY_BOX", 'key ctrl+a', "type $QUERY", 'key return',
         "click $FIRST_ROW"
     )
 
-    # A container in full: the payload card and the whole description as a tree,
-    # beside the rows it came from. The empty governance.owner cell on another
-    # row is in the same frame, which is the ad-hoc-metadata argument made in a
-    # picture rather than in a sentence.
+    # A container in full: the payload card and the whole description as a
+    # tree. The richest of the five is selected so the pane is not half empty,
+    # and field-notes' blank governance.owner is above it in the same frame.
     Shot '02-a-container-in-full' @(
         "click $RECURSIVE",
         "click $QUERY_BOX", 'key ctrl+a', "type $QUERY", 'key return',
-        "click $FOURTH_ROW"
+        "click $RICHEST_ROW"
     )
 
-    # What the scan could not do, said out loud: a file it could not read and a
-    # comparison that crossed types, both under the count.
+    # What the scan could not do, under the count: a file it could not read and
+    # a comparison that crossed types, from a query producing both at once. The
+    # fold is left shut, because opening it wants a coordinate that only exists
+    # once notices are on screen and this file carries no guessed ones.
     Shot '03-what-the-scan-noticed' @(
         "click $RECURSIVE",
         "click $QUERY_BOX", 'key ctrl+a', "type $QUERY_NOTICES", 'key return',
-        "click $NOTICES"
+        "click $FIRST_ROW"
     )
 }
+
 
 
 Take-Shots -Launch @('exe', $EXE, $CORPUS) -Process $PROCESS `
