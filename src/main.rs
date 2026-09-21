@@ -402,7 +402,15 @@ impl eframe::App for App {
         egui::Panel::bottom("status").show(ui, |ui| self.status_bar(ui));
         egui::Panel::right("detail")
             .resizable(true)
-            .default_size(360.0)
+            // Wide enough for the tree rather than for the payload card. The
+            // tree spends about 210 pixels on the key column before a value
+            // starts, and a nested key pushes its value another 25 right, so a
+            // pane of 360 leaves a metadata string about 140 pixels to be read
+            // in and clips most of them. 480 leaves it 235, which fits the
+            // longest thing a description usually holds — a payload filename.
+            // Measured off the store frames, where a clipped value is what the
+            // shot is of.
+            .default_size(480.0)
             .show(ui, |ui| self.detail_pane(ui));
         egui::CentralPanel::default().show(ui, |ui| self.results(ui));
     }

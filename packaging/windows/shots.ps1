@@ -14,14 +14,19 @@
 #
 # WHAT THE SET HAS TO SHOW, AND WHY
 #
-# Apple rejected the Mac four under guideline 2.3.3 - *the Mac screenshots do
-# not show the actual app in use in the majority of the screenshots* - and the
-# rejection was right. Nothing was selected in any of them, so the element pane
-# read *Select an element on the page or in the structure* in all four, and no
-# edit was under way. A frame of an editor with nothing selected is a frame of
-# a viewer. The Windows four are that same set in its Windows spelling and the
-# same criticism is true of them, so: something is selected in every shot below,
-# and an edit is under way or just done in more than one.
+# Apple rejected segler's first four under guideline 2.3.3 - *the Mac
+# screenshots do not show the actual app in use in the majority of the
+# screenshots* - because nothing was selected in any of them, so its element
+# pane read *select an element* in all four. A frame of an editor with nothing
+# selected is a frame of a viewer, and the Microsoft reviewer reads a listing
+# the same way even though the guideline is Apple's.
+#
+# The same trap here wears different clothes: **a frame of Filebase with no
+# query run is a frame of an empty window.** The first thing this application
+# draws is a folder bar, an empty table and *Choose a folder, then run a
+# query*. So every shot below has a query answered and a row selected, and two
+# of them show something a viewer could not do - the notices under the count,
+# and a container's whole description beside the table.
 #
 # The coordinates are measured from the frame's top-left corner at the size
 # declared here. Change the size and they all move; that is why the size is a
@@ -147,5 +152,22 @@ function Get-Shots {
 
 
 
-Take-Shots -Launch @('exe', $EXE, $CORPUS) -Process $PROCESS `
+# Where the corpus is copied to before it is photographed, and why it is copied
+# at all: the folder bar shows the path it was given, and a store screenshot
+# reading D:\a\filebase\filebase\dist\corpus tells a customer about a build
+# machine. Under Documents it reads like somebody's own folder. `packaging/macos/shots.sh`
+# stages for the same reason and into the same-looking place.
+#
+# Copied as a tree, not as a flat list of files: the corpus is three levels
+# deep, which is the whole point of the recursive tick box.
+$STAGED = Join-Path $env:USERPROFILE 'Documents\Contracts'
+
+if (-not (Test-Path $CORPUS)) {
+    throw "shots.ps1: no corpus at $CORPUS; run packaging/demo-corpus.sh"
+}
+if (Test-Path $STAGED) { Remove-Item -Recurse -Force $STAGED }
+New-Item -ItemType Directory -Force -Path (Split-Path $STAGED) | Out-Null
+Copy-Item -Recurse -Force $CORPUS $STAGED
+
+Take-Shots -Launch @('exe', $EXE, $STAGED) -Process $PROCESS `
     -Width $WIDTH -Height $HEIGHT -OutDir $OutDir -Reference:$Reference
