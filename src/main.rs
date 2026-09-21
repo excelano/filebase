@@ -561,6 +561,15 @@ impl App {
     }
 
     fn detail_pane(&mut self, ui: &mut egui::Ui) {
+        // **A resizable panel collapses to its minimum unless its content
+        // claims the width**, which egui's own `Panel::resizable` documentation
+        // says and which this pane proved: with nothing selected it drew one
+        // short label, so the panel rendered 96 pixels — `Panel`'s floor — where
+        // `default_size(360.0)` had asked for 360. Found by measuring the first
+        // reference frame rather than by looking at the window, because at a
+        // glance a narrow pane reads as a design choice.
+        ui.take_available_width();
+
         let Some(detail) = &self.selected else {
             ui.add_space(8.0);
             ui.weak(t("Select a row."));
