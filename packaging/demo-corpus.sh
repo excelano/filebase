@@ -61,7 +61,9 @@ set -eu
 
 here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 root=$(CDPATH= cd -- "${here}/.." && pwd)
-out="${root}/dist/corpus"
+# Empty until the arguments and the language have both been read: the default
+# depends on the language, and an explicit `--out` has to win over it.
+out=''
 
 lang=en
 
@@ -92,7 +94,8 @@ case "$lang" in
         say_notes='Notes taken on a visit.'
         say_invoice='An invoice, settled.'
         broken=broken.slpc;  say_broken='This is not a container.'
-        plain=README.md;     say_plain='A plain file, which the scan does not mention.' ;;
+        plain=README.md;     say_plain='A plain file, which the scan does not mention.'
+        default_out="${root}/dist/corpus" ;;
     de|de-DE|de-de)
         agreement=rahmenvertrag.pdf;             agreement_title='Rahmenvertrag'
         renewal=verlaengerung-2026.docx;         renewal_title='Verlängerung, 2026'
@@ -107,9 +110,19 @@ case "$lang" in
         say_notes='Notizen von einem Besuch.'
         say_invoice='Eine Rechnung, beglichen.'
         broken=defekt.slpc;  say_broken='Dies ist kein Container.'
-        plain=LIESMICH.md;   say_plain='Eine gewöhnliche Datei, die der Durchlauf nicht nennt.' ;;
+        plain=LIESMICH.md;   say_plain='Eine gewöhnliche Datei, die der Durchlauf nicht nennt.'
+        default_out="${root}/dist/corpus-de" ;;
     *) echo "demo-corpus.sh: no corpus is written for ${lang}" >&2; exit 2 ;;
 esac
+
+# **A directory per language, and this is why.** Both sets are built in the
+# same working copy — CI runs this twice — so one default for both means the
+# second run overwrites the first and the English frames are taken of German
+# containers. That passes: the shot is the right size, the rows are there, and
+# nothing reads the language of a title. It was caught by the German recipe
+# refusing a corpus that was not where it looked, which is luck; the directory
+# is per language so that it cannot happen the other way round.
+out=${out:-$default_out}
 
 command -v slipcase >/dev/null || {
     echo "demo-corpus.sh: no 'slipcase' on PATH; it is slpc-rust's command" >&2
