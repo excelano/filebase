@@ -1,3 +1,13 @@
+filebase (0.1.1) unstable; urgency=low
+
+  * The detail pane fits a value, and the Windows frame is of a folder
+  * The tree offers nothing the window would not save
+  * The coordinates, measured off the reference frames
+  * The detail pane claims its width, or the panel collapses to its floor
+  * The Mac lane may write to the release it is uploading to
+
+ -- David M. Anderson <david.anderson@excelano.com>  Mon, 21 Sep 2026 07:57:47 -0500
+
 filebase (0.1.0) unstable; urgency=low
 
   * The end-to-end tests assumed Linux, and Windows CI said so
