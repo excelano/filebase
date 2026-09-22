@@ -1,50 +1,21 @@
 # What this release tells the stores it changed, in every language the
-# listing is in. One file, every language, because a translation is reviewed
+# listing is in. One file, both languages, because a translation is reviewed
 # beside its source.
 #
 # The version is checked against the release being cut: notes left from last
 # time stop the release rather than reaching a listing. A language the listing
-# has and this file does not is also a refusal — a listing saying something
-# nobody wrote is worse than a release that stops.
-#
-# The limit is 1500 characters a locale.
+# has and this file does not is also a refusal - a German listing saying
+# something nobody wrote is worse than a release that stops. So is a language
+# written longer than the store takes, which a store answers by refusing the
+# whole submission without saying which field was wrong.
 #
 # Nothing else reads this. The GitHub release, the Debian changelog and the
 # AppStream entry take commit subjects.
-#
-# Author: David M. Anderson
-# Built with AI assistance (Claude, Anthropic)
 
-version = "0.1.2"
+version = "0.2.0"
 
-[locales."de-de"]
-whats-new = """
-Das Containerformat wechselt von 1.0 zu 1.1. Zwei Namen ändern sich in \
-jedem Container: Die Beschreibungsdatei heißt jetzt slipcase.flyleaf.toml \
-statt slipcase.metadata.toml, und der Schlüssel, der die beschriebene \
-Datei benennt, heißt content.file statt payload.file. Filebase benennt \
-dieselben zwei Dinge auch in der eigenen Oberfläche um: aus den Metadaten \
-wird das Flyleaf, aus der Nutzlast die Inhaltsdatei.
-
-Ein Container aus einer früheren Version trägt noch die Namen von 1.0, \
-daher kann diese Version ihn nicht lesen: Er erscheint als übersprungene \
-Zeile mit genanntem Grund, statt als Ergebnis. Dabei geht nichts verloren: \
-Eine .slpc ist im Kern ein gewöhnliches ZIP-Archiv, jedes Archivprogramm \
-öffnet sie und entpackt beide Dateien direkt.
-"""
-
-[locales."en-us"]
-whats-new = """
-The container format moves from 1.0 to 1.1. Two names inside every \
-container change: the description file is now slipcase.flyleaf.toml \
-rather than slipcase.metadata.toml, and the key naming the file it \
-describes is content.file rather than payload.file. Filebase renames the \
-same two things throughout its own interface: "metadata" becomes \
-"flyleaf," "payload" becomes "content file."
-
-A container made by an earlier version still carries 1.0's names, so this \
-version cannot read it: it shows up as a skipped row, with the reason \
-named, rather than as a result. Nothing in the file is lost: a .slpc is an \
-ordinary ZIP archive underneath, so any archive tool opens one and \
-extracts both files directly.
-"""
+[locales]
+[locales.de-de]
+whats-new = "Das Containerformat wechselt von 1.0 zu 1.1. Zwei Namen ändern sich in jedem Container: Die Beschreibungsdatei heißt jetzt slipcase.flyleaf.toml statt slipcase.metadata.toml, und der Schlüssel, der die beschriebene Datei benennt, heißt content.file statt payload.file. Filebase benennt dieselben zwei Dinge auch in der eigenen Oberfläche um: aus den Metadaten wird das Flyleaf, aus der Nutzlast die Inhaltsdatei.\n\nEin Container aus einer früheren Version trägt noch die Namen von 1.0, daher kann diese Version ihn nicht lesen: Er erscheint als übersprungene Zeile mit genanntem Grund, statt als Ergebnis. Dabei geht nichts verloren: Eine .slpc ist im Kern ein gewöhnliches ZIP-Archiv, jedes Archivprogramm öffnet sie und entpackt beide Dateien direkt."
+[locales.en-us]
+whats-new = "The container format moves from 1.0 to 1.1. Two names inside every container change: the description file is now slipcase.flyleaf.toml rather than slipcase.metadata.toml, and the key naming the file it describes is content.file rather than payload.file. Filebase renames the same two things throughout its own interface: \"metadata\" becomes \"flyleaf,\" \"payload\" becomes \"content file.\"\n\nA container made by an earlier version still carries 1.0's names, so this version cannot read it: it shows up as a skipped row, with the reason named, rather than as a result. Nothing in the file is lost: a .slpc is an ordinary ZIP archive underneath, so any archive tool opens one and extracts both files directly."

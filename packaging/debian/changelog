@@ -1,3 +1,16 @@
+filebase (0.2.0) unstable; urgency=low
+
+  * msix joins the targets: the first Microsoft Store submission published
+  * The two members 1.1 renames, carried through: payload becomes content file
+  * The Windows recipe is ASCII, and the umlaut is a code point
+  * The tick box is where the language puts it
+  * A corpus directory per language, or the second run eats the first
+  * German
+  * What a store release says it changed
+  * The Windows set lands under its locale
+
+ -- David M. Anderson <david.anderson@excelano.com>  Tue, 22 Sep 2026 16:24:42 -0500
+
 filebase (0.1.2) unstable; urgency=low
 
   * The header search follows an umbrella's symlinks
