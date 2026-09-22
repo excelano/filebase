@@ -14,9 +14,9 @@ Description: Query a folder of Slipcase containers by their flyleaf
  hands the content file to whatever the system opens that kind of file with.
  .
  It reads the flyleaf in place, through the same library the slipcase command
- uses, and never unpacks a content file to answer. It keeps no index and no state,
- so every query is a fresh scan and the answer is what is on disk now. It
- never writes a container.
+ uses, and never unpacks a content file to answer. It keeps no index and no
+ state, so every query is a fresh scan and the answer is what is on disk now.
+ It never writes a container.
  .
  The query language is SlipQL, embedded as the slipql crate rather than
  reimplemented, so the command line and the window answer the same question
