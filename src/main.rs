@@ -98,7 +98,7 @@ const FIRST_QUERY: &str = "select *";
 
 fn main() -> eframe::Result {
     // One reading of the platform, handed to this application and to the widget
-    // that draws the metadata tree inside its window. `flyleaf` carries its own
+    // that draws the flyleaf tree inside its window. `flyleaf` carries its own
     // catalogue — a published crate has to — and takes a tag rather than a
     // catalogue, so a version skew between the two costs nothing. Asked once
     // and passed on rather than asked twice, because a tree in a different
@@ -208,13 +208,13 @@ struct App {
     /// that returns the same container: the row indices move, the path does
     /// not.
     selected: Option<Detail>,
-    /// Where a payload is put before it is handed over: a directory of this
+    /// Where a content file is put before it is handed over: a directory of this
     /// process's own, made on the first Open and removed with its contents when
     /// this drops.
     ///
     /// The application never writes beside the container it is reading.
     scratch: Option<tempfile::TempDir>,
-    /// What the last attempt to hand a payload over said, where it had
+    /// What the last attempt to hand a content file over said, where it had
     /// something to say.
     said: Option<String>,
     /// A dialog open on another thread.
@@ -319,14 +319,14 @@ impl App {
         self.picking = Some(Picking { answer });
     }
 
-    /// Hand the selected container's payload to whatever the system opens it
+    /// Hand the selected container's content file to whatever the system opens it
     /// with.
     ///
-    /// The payload goes into this process's own directory first. Asking the
+    /// The content file goes into this process's own directory first. Asking the
     /// platform to open a member of a ZIP archive is not a thing any of the
     /// three platforms can do, and extracting beside the container would change
     /// the directory this window was asked to look at.
-    fn open_payload(&mut self) {
+    fn open_content_file(&mut self) {
         let Some(detail) = &self.selected else { return };
         let scratch = match &self.scratch {
             Some(dir) => dir,
@@ -334,13 +334,13 @@ impl App {
                 // 0700 asked for explicitly. `Builder::tempdir` goes through
                 // the umask, which is 0755 under the common one and 0775 under
                 // Debian's, and slipcase-desktop shipped that way for a while:
-                // every payload somebody pressed Open on was readable by any
+                // every content file somebody pressed Open on was readable by any
                 // account on the machine.
                 match new_scratch() {
                     Ok(dir) => self.scratch.insert(dir),
                     Err(e) => {
                         self.said = Some(fill(
-                            t("Cannot make somewhere to put the payload: {why}"),
+                            t("Cannot make somewhere to put the content file: {why}"),
                             &[("why", &e.to_string())],
                         ));
                         return;
@@ -359,7 +359,7 @@ impl App {
             }
             Err(e) => {
                 self.said = Some(fill(
-                    t("Cannot read the payload: {why}"),
+                    t("Cannot read the content file: {why}"),
                     &[("why", &e.to_string())],
                 ));
             }
@@ -414,12 +414,12 @@ impl eframe::App for App {
         egui::Panel::bottom("status").show(ui, |ui| self.status_bar(ui));
         egui::Panel::right("detail")
             .resizable(true)
-            // Wide enough for the tree rather than for the payload card. The
+            // Wide enough for the tree rather than for the content file card. The
             // tree spends about 210 pixels on the key column before a value
             // starts, and a nested key pushes its value another 25 right, so a
-            // pane of 360 leaves a metadata string about 140 pixels to be read
+            // pane of 360 leaves a flyleaf string about 140 pixels to be read
             // in and clips most of them. 480 leaves it 235, which fits the
-            // longest thing a description usually holds — a payload filename.
+            // longest thing a description usually holds — a content file's filename.
             // Measured off the store frames, where a clipped value is what the
             // shot is of.
             .default_size(480.0)
@@ -600,17 +600,17 @@ impl App {
         ui.strong(detail.relative.clone());
         ui.add_space(8.0);
 
-        let can_open = detail.payload().is_some_and(filebase::detail::Payload::can_be_opened);
+        let can_open = detail.content().is_some_and(filebase::detail::ContentFile::can_be_opened);
         match &detail.outcome {
             Outcome::Unreadable(why) => {
                 ui.colored_label(ui.visuals().error_fg_color, why);
                 return;
             }
             Outcome::Read(contents) => {
-                ui.label(t("Payload"));
-                ui.label(contents.payload.name.clone());
-                ui.weak(contents.payload.size_line());
-                if let Some(why) = &contents.payload.unreadable {
+                ui.label(t("Content file"));
+                ui.label(contents.content.name.clone());
+                ui.weak(contents.content.size_line());
+                if let Some(why) = &contents.content.unreadable {
                     ui.weak(fill(
                         t("This build cannot decode it: {why}"),
                         &[("why", why)],
@@ -623,17 +623,17 @@ impl App {
         // Offered only where there is a decoder, which is the difference
         // between a button that is not there and a button that does not work.
         if ui
-            .add_enabled(can_open, egui::Button::new(t("Open payload")))
+            .add_enabled(can_open, egui::Button::new(t("Open content file")))
             .clicked()
         {
-            self.open_payload();
+            self.open_content_file();
         }
         ui.add_space(8.0);
         ui.separator();
-        ui.label(t("Metadata"));
+        ui.label(t("Flyleaf"));
 
         // Borrowed again rather than held across the button above, because
-        // `open_payload` takes `self` and the tree takes the document mutably.
+        // `open_content_file` takes `self` and the tree takes the document mutably.
         let Some(detail) = &mut self.selected else {
             return;
         };
@@ -647,7 +647,7 @@ impl App {
                 // reading half of itself. There is no save under this pane and
                 // there is no path through this application that writes a
                 // container.
-                flyleaf::render(ui, &mut contents.metadata, &ReadOnly);
+                flyleaf::render(ui, &mut contents.flyleaf, &ReadOnly);
             });
     }
 }
@@ -677,8 +677,8 @@ mod tests {
             filebase::i18n::set_language("de", CATALOGUES).as_deref(),
             Some("de")
         );
-        assert_eq!(filebase::i18n::t("Payload"), "Nutzlast");
-        assert_eq!(filebase::i18n::t("Open payload"), "Nutzlast öffnen");
+        assert_eq!(filebase::i18n::t("Content file"), "Inhaltsdatei");
+        assert_eq!(filebase::i18n::t("Open content file"), "Inhaltsdatei öffnen");
         // A message with a placeholder: the braces have to survive the
         // translation, because `fill` looks them up by name afterwards.
         assert!(filebase::i18n::t("{path} is not a folder.").contains("{path}"));

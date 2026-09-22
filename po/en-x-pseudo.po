@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filebase\n"
 "Report-Msgid-Bugs-To: https://github.com/excelano/filebase/issues\n"
-"POT-Creation-Date: 2026-09-21 11:09-0500\n"
+"POT-Creation-Date: 2026-09-22 14:07-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: none\n"
@@ -28,85 +28,86 @@ msgstr[1] "[{n} bytéš ····]"
 msgid "{size} {unit} ({n} bytes)"
 msgstr "[{size} {unit} ({n} bytéš) ···········]"
 
-#: src/main.rs:237
+#: src/main.rs:249 src/main.rs:684
 msgid "{path} is not a folder."
 msgstr "[{path} íš ñöt ä földér. ··········]"
 
-#: src/main.rs:300
+#: src/main.rs:312
 msgid "Choose a folder"
 msgstr "[Chööšé ä földér ·······]"
 
-#: src/main.rs:331
-msgid "Cannot make somewhere to put the payload: {why}"
-msgstr "[Cäññöt mäké šöméwhéré tö püt thé päylöäd: {why} ···················]"
-
 #: src/main.rs:343
+msgid "Cannot make somewhere to put the content file: {why}"
+msgstr ""
+"[Cäññöt mäké šöméwhéré tö püt thé cöñtéñt fílé: {why} ·····················]"
+
+#: src/main.rs:355
 msgid "Nothing opened it: {why}"
 msgstr "[Nöthíñg öpéñéd ít: {why} ··········]"
 
-#: src/main.rs:350
-msgid "Cannot read the payload: {why}"
-msgstr "[Cäññöt réäd thé päylöäd: {why} ·············]"
+#: src/main.rs:362
+msgid "Cannot read the content file: {why}"
+msgstr "[Cäññöt réäd thé cöñtéñt fílé: {why} ···············]"
 
-#: src/main.rs:423
+#: src/main.rs:435
 msgid "Open folder…"
 msgstr "[Öpéñ földér… ······]"
 
-#: src/main.rs:427
+#: src/main.rs:439
 msgid "recursive"
 msgstr "[récüršívé ····]"
 
-#: src/main.rs:428
+#: src/main.rs:440
 msgid "Descend into subdirectories."
 msgstr "[Déšcéñd íñtö šübdíréctöríéš. ············]"
 
-#: src/main.rs:440
+#: src/main.rs:452
 msgid "No folder chosen."
 msgstr "[Nö földér chöšéñ. ·······]"
 
-#: src/main.rs:450
+#: src/main.rs:462
 msgid "Run"
 msgstr "[Rüñ ··]"
 
-#: src/main.rs:484
+#: src/main.rs:496
 msgid "No query has been run."
 msgstr "[Nö qüéry häš bééñ rüñ. ·········]"
 
-#: src/main.rs:498
+#: src/main.rs:510
 msgid "What the scan noticed"
 msgstr "[Whät thé šcäñ ñötícéd ·········]"
 
-#: src/main.rs:513
+#: src/main.rs:525
 msgid "Choose a folder, then run a query."
 msgstr "[Chööšé ä földér, théñ rüñ ä qüéry. ··············]"
 
-#: src/main.rs:520
+#: src/main.rs:532
 msgid "Scanning…"
 msgstr "[Scäññíñg… ·····]"
 
-#: src/main.rs:522
+#: src/main.rs:534
 msgid "Nothing matched."
 msgstr "[Nöthíñg mätchéd. ·······]"
 
-#: src/main.rs:583
+#: src/main.rs:595
 msgid "Select a row."
 msgstr "[Séléct ä röw. ······]"
 
-#: src/main.rs:598
-msgid "Payload"
-msgstr "[Päylöäd ···]"
+#: src/main.rs:610 src/main.rs:680
+msgid "Content file"
+msgstr "[Cöñtéñt fílé ·····]"
 
-#: src/main.rs:603
+#: src/main.rs:615
 msgid "This build cannot decode it: {why}"
 msgstr "[Thíš büíld cäññöt décödé ít: {why} ··············]"
 
-#: src/main.rs:614
-msgid "Open payload"
-msgstr "[Öpéñ päylöäd ·····]"
+#: src/main.rs:626 src/main.rs:681
+msgid "Open content file"
+msgstr "[Öpéñ cöñtéñt fílé ·······]"
 
-#: src/main.rs:621
-msgid "Metadata"
-msgstr "[Métädätä ····]"
+#: src/main.rs:633
+msgid "Flyleaf"
+msgstr "[Flyléäf ···]"
 
 #: src/query.rs:266 src/query.rs:334
 msgid "{n} row"

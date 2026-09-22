@@ -23,8 +23,8 @@
 #     has something to report, and a file that is not named like one, so the
 #     scan can be seen not to mention it.
 #   - Three levels, so `recursive` is visibly doing something.
-#   - Payloads of several kinds, so the payload card is not five copies of one
-#     sentence.
+#   - Content files of several kinds, so the content file card is not five
+#     copies of one sentence.
 #
 # **The subject is invented.** No real person, organisation, matter or date
 # appears in it, because these frames go into two store listings and onto a
@@ -136,13 +136,13 @@ mkdir -p "$out/2026/q3" "$out/2025"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT INT TERM
 
-# pack <name> <subdirectory> <metadata> <payload text>
+# pack <name> <subdirectory> <flyleaf> <content text>
 pack() {
     printf '%s\n' "$4" > "${work}/$1"
-    printf '%s\n' "$3" > "${work}/meta.toml"
-    slipcase pack "${work}/$1" --name "$1" --meta "${work}/meta.toml" \
+    printf '%s\n' "$3" > "${work}/flyleaf.toml"
+    slipcase pack "${work}/$1" --name "$1" --flyleaf "${work}/flyleaf.toml" \
         -o "${out}/$2/$1.slpc" --force >/dev/null
-    rm -f "${work}/$1" "${work}/meta.toml"
+    rm -f "${work}/$1" "${work}/flyleaf.toml"
 }
 
 pack "$agreement" "." "title = \"${agreement_title}\"

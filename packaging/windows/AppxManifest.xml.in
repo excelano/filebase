@@ -51,7 +51,7 @@
     <DisplayName>Filebase</DisplayName>
     <PublisherDisplayName>@PUBLISHER_DISPLAY_NAME@</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
-    <Description>Point Filebase at a folder of Slipcase containers and ask which of them say what you are looking for. One row per container, one column per metadata key. It never writes a container and makes no network connection.</Description>
+    <Description>Point Filebase at a folder of Slipcase containers and ask which of them say what you are looking for. One row per container, one column per flyleaf key. It never writes a container and makes no network connection.</Description>
   </Properties>
 
   <Dependencies>

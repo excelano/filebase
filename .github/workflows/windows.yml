@@ -172,7 +172,7 @@ jobs:
 
       # Both languages, because the listing is in both. `shots.ps1` refuses a
       # language it has no set for, and opens a German corpus for the German
-      # set: this application's frames are almost entirely container metadata,
+      # set: this application's frames are almost entirely a container's flyleaf,
       # so the window's language alone would not make a German frame. The
       # language is also the directory the set lands in, which is how the Store
       # files a frame and what `ship` refuses a set for the want of.

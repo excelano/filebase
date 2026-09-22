@@ -27,8 +27,8 @@
 #
 # **Both languages, and the German takes its terminology from `po/de.po`.** A
 # listing that taught a reader a word the window has no use for would be worse
-# than an English one: a Nutzlast is what the window calls a payload, and so it
-# is what the listing calls one. The German is not a translation of the English
+# than an English one: an Inhaltsdatei is what the window calls a content file,
+# and so it is what the listing calls one. The German is not a translation of the English
 # line for line — German runs about a third longer, and the short description
 # has a hard limit of 500 — so it says the same things in its own length.
 #
@@ -51,9 +51,9 @@ Point it at a folder and ask a question:
 
 select @path, title, governance.owner where status = "draft" or tags contains "legal"
 
-What answered comes back as rows: one row per container, one column per metadata key. Tick recursive and it descends; leave it and it does not.
+What answered comes back as rows: one row per container, one column per flyleaf key. Tick recursive and it descends; leave it and it does not.
 
-Select a row and that container is beside the table — what its payload is called, how large it is, and its whole description as a tree you can read. Press Open payload and the document goes to whatever your system opens that kind of file with.
+Select a row and that container is beside the table — what its content file is called, how large it is, and its whole description as a tree you can read. Press Open content file and the document goes to whatever your system opens that kind of file with.
 
 WHAT THE LANGUAGE IS
 
@@ -82,7 +82,7 @@ Written in Rust, free, and open source under the MIT licence, at github.com/exce
 name = "Filebase"
 subtitle = "Query a folder of documents"
 promotional-text = "Point it at a folder of Slipcase containers, ask which of them say what you are looking for, and read the answer as rows."
-keywords = "Slipcase,slpc,metadata,query,search,documents,folder,container,SlipQL,TOML"
+keywords = "Slipcase,slpc,flyleaf,query,search,documents,folder,container,SlipQL,TOML"
 
 [locales."en-us".microsoft]
 name = "Filebase"
@@ -94,12 +94,12 @@ Point Filebase at the folder and ask. What answered comes back as rows, one per 
 It never writes a container, keeps no index, and makes no network connection.
 """
 features = [
-  "Ask a folder of Slipcase containers a question and read the answer as rows: one row per container, one column per metadata key.",
+  "Ask a folder of Slipcase containers a question and read the answer as rows: one row per container, one column per flyleaf key.",
   "SlipQL takes its clauses from SQL and its literals from TOML, so anyone who can write a description can query one.",
   "Rows arrive as the scan finds them, so a large folder starts answering at once rather than when it finishes.",
   "Descend into subfolders, or do not: recursive is a tick box and off by default.",
-  "Select a row to see what the payload is called, how large it is, and the container's whole description as a tree.",
-  "Open the payload in whatever your system has registered for that kind of file.",
+  "Select a row to see what the content file is called, how large it is, and the container's whole description as a tree.",
+  "Open the content file in whatever your system has registered for that kind of file.",
   "A key a container does not have is an empty cell, not a failed query, because these descriptions are written by people.",
   "A file it could not read is skipped and reported, and so is a comparison that crossed types.",
   "It never writes a container. There is no Save, and no path through it that changes one.",
@@ -111,7 +111,7 @@ features = [
 keywords = [
   "Slipcase",
   "slpc",
-  "metadata",
+  "flyleaf",
   "document search",
   "query",
   "file manager",
@@ -135,9 +135,9 @@ Auf einen Ordner zeigen und eine Frage stellen:
 
 select @path, title, governance.owner where status = "draft" or tags contains "legal"
 
-Was geantwortet hat, kommt als Zeilen zurück: eine Zeile je Container, eine Spalte je Metadatenschlüssel. Setzen Sie den Haken bei rekursiv, und es steigt in Unterordner ab; lassen Sie ihn weg, und es tut es nicht.
+Was geantwortet hat, kommt als Zeilen zurück: eine Zeile je Container, eine Spalte je Flyleaf-Schlüssel. Setzen Sie den Haken bei rekursiv, und es steigt in Unterordner ab; lassen Sie ihn weg, und es tut es nicht.
 
-Wählen Sie eine Zeile, und dieser Container steht neben der Tabelle: wie seine Nutzlast heißt, wie groß sie ist, und seine ganze Beschreibung als lesbarer Baum. Ein Druck auf Nutzlast öffnen gibt das Dokument an das Programm weiter, das Ihr System für diese Art von Datei vorgesehen hat.
+Wählen Sie eine Zeile, und dieser Container steht neben der Tabelle: wie seine Inhaltsdatei heißt, wie groß sie ist, und seine ganze Beschreibung als lesbarer Baum. Ein Druck auf Inhaltsdatei öffnen gibt das Dokument an das Programm weiter, das Ihr System für diese Art von Datei vorgesehen hat.
 
 WAS DIE SPRACHE IST
 
@@ -166,7 +166,7 @@ In Rust geschrieben, kostenlos und quelloffen unter der MIT-Lizenz, auf github.c
 name = "Filebase"
 subtitle = "Dokumentordner abfragen"
 promotional-text = "Auf einen Ordner voller Slipcase-Container zeigen, fragen, welche davon sagen, was Sie suchen, und die Antwort als Zeilen lesen."
-keywords = "Slipcase,slpc,Metadaten,Abfrage,Suche,Dokumente,Ordner,Container,SlipQL,TOML"
+keywords = "Slipcase,slpc,Flyleaf,Abfrage,Suche,Dokumente,Ordner,Container,SlipQL,TOML"
 
 [locales."de-de".microsoft]
 name = "Filebase"
@@ -178,12 +178,12 @@ Zeigen Sie Filebase auf den Ordner und fragen Sie. Was antwortet, kommt als Zeil
 Es schreibt nie einen Container, führt keinen Index und baut keine Netzwerkverbindung auf.
 """
 features = [
-  "Stellen Sie einem Ordner voller Slipcase-Container eine Frage und lesen Sie die Antwort als Zeilen: eine Zeile je Container, eine Spalte je Metadatenschlüssel.",
+  "Stellen Sie einem Ordner voller Slipcase-Container eine Frage und lesen Sie die Antwort als Zeilen: eine Zeile je Container, eine Spalte je Flyleaf-Schlüssel.",
   "SlipQL entlehnt seine Klauseln von SQL und seine Literale von TOML: Wer eine Beschreibung schreiben kann, kann sie auch abfragen.",
   "Zeilen erscheinen, sobald der Durchlauf sie findet, ein großer Ordner beginnt also sofort zu antworten und nicht erst am Ende.",
   "In Unterordner absteigen oder nicht: rekursiv ist ein Häkchen und standardmäßig aus.",
-  "Wählen Sie eine Zeile, um zu sehen, wie die Nutzlast heißt, wie groß sie ist und wie die ganze Beschreibung des Containers als Baum aussieht.",
-  "Öffnen Sie die Nutzlast mit dem Programm, das Ihr System für diese Art von Datei vorgesehen hat.",
+  "Wählen Sie eine Zeile, um zu sehen, wie die Inhaltsdatei heißt, wie groß sie ist und wie die ganze Beschreibung des Containers als Baum aussieht.",
+  "Öffnen Sie die Inhaltsdatei mit dem Programm, das Ihr System für diese Art von Datei vorgesehen hat.",
   "Ein Schlüssel, den ein Container nicht hat, ist eine leere Zelle und keine gescheiterte Abfrage, denn diese Beschreibungen schreiben Menschen.",
   "Eine Datei, die nicht gelesen werden konnte, wird übersprungen und gemeldet, ebenso ein Vergleich über Typgrenzen.",
   "Es schreibt nie einen Container. Es gibt kein Speichern und keinen Weg hindurch, der einen verändert.",
@@ -192,4 +192,4 @@ features = [
   "Speichert nichts auf Ihrer Festplatte: keine Einstellungsdatei, keine Liste zuletzt geöffneter Ordner, keinen Zwischenspeicher.",
   "In Rust geschrieben und quelloffen unter der MIT-Lizenz, ebenso wie das Format, das es liest.",
 ]
-keywords = ["Slipcase", "slpc", "Metadaten", "Dokumentsuche", "Abfrage", "Dateimanager", "TOML"]
+keywords = ["Slipcase", "slpc", "Flyleaf", "Dokumentsuche", "Abfrage", "Dateimanager", "TOML"]

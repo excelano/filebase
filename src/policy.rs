@@ -1,4 +1,4 @@
-//! The rule the metadata tree is drawn under here: read, never written.
+//! The rule the flyleaf tree is drawn under here: read, never written.
 //
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
@@ -48,17 +48,17 @@ impl flyleaf::Policy for ReadOnly {
 
     /// How a protected string reads.
     ///
-    /// SPEC §3 requires a member name be shown escaped, and `payload.file` is a
+    /// SPEC §3 requires a member name be shown escaped, and `content.file` is a
     /// member name. slipcase-desktop found this by hand on Windows in 2026-08:
-    /// a payload called `report<U+202E>fdp.exe` read `report\u{202E}fdp.exe` on
+    /// a content file called `report<U+202E>fdp.exe` read `report\u{202E}fdp.exe` on
     /// the card and `reportfdp.exe` two rows below it in the tree, because egui
     /// gives a bidirectional formatting character zero advance width. The tree
     /// was showing the spoof the escaping exists to prevent, under a card that
     /// was not.
     ///
-    /// Applied to every value rather than to `payload.file` alone. `slpc::display_name`
+    /// Applied to every value rather than to `content.file` alone. `slpc::display_name`
     /// escapes what is not printable and returns the rest untouched, so an
-    /// ordinary string is unchanged, and a metadata *value* carrying a
+    /// ordinary string is unchanged, and a flyleaf *value* carrying a
     /// direction override can reorder the line it sits on exactly as a member
     /// name can. Only a protected string comes through here, and here every
     /// string is protected, so this reaches all of them.

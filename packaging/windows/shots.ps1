@@ -78,8 +78,8 @@ $HEIGHT = 768
 # rather than a document, because that is what this application opens; the
 # driver passes it as an argument, since Filebase declares no file type for the
 # shell to route.
-# Two corpora, because this application's frames are almost entirely container
-# *metadata*: a German window over English titles, owners and tags would be a
+# Two corpora, because this application's frames are almost entirely a
+# container's *flyleaf*: a German window over English titles, owners and tags would be a
 # German frame of mostly English pixels. `packaging/demo-corpus.sh` builds both
 # and says why the German file names sort where the English ones do, which is
 # what lets the row coordinates below serve either set.
@@ -152,7 +152,7 @@ $QUERY_NOTICES = 'select @path, title, pages where pages > 10'
 #   key NAME      one key, optionally with modifiers: ctrl+a, return
 function Get-Shots {
     # The answer to a question, with a row selected: five rows where the tick
-    # box was the only thing touched, a column per metadata key, and the
+    # box was the only thing touched, a column per flyleaf key, and the
     # container on the right. This frame has to carry the listing, so it is
     # first. A frame of Filebase with no query run is a frame of an empty
     # window, which is this application's version of the trap Apple rejected
@@ -163,7 +163,7 @@ function Get-Shots {
         "click $FIRST_ROW"
     )
 
-    # A container in full: the payload card and the whole description as a
+    # A container in full: the content file card and the whole description as a
     # tree. The richest of the five is selected so the pane is not half empty,
     # and field-notes' blank governance.owner is above it in the same frame.
     Shot '02-a-container-in-full' @(

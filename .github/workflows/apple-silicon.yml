@@ -195,7 +195,7 @@ jobs:
       # Both languages, because the listing is in both. `shots.sh` refuses a
       # language it has no set for rather than photographing an English window
       # under a German heading, and it opens a German corpus for the German
-      # set — this application's frames are almost entirely container metadata,
+      # set — this application's frames are almost entirely a container's flyleaf,
       # so the window's language alone would not make a German frame.
       - name: The Store screenshots
         if: inputs.screenshots && inputs.screenshots != 'no'

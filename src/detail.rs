@@ -2,7 +2,7 @@
 //!
 //! A row in the table is what the query projected. This is everything else the
 //! container holds, read when somebody selects it and not before: a scan that
-//! opened every payload to fill a pane nobody is looking at would be a scan
+//! opened every content file to fill a pane nobody is looking at would be a scan
 //! that costs what an index costs, which is what `slipql` exists not to do.
 //
 // Author: David M. Anderson
@@ -16,7 +16,7 @@ use crate::i18n::{fill, t, tn};
 
 /// One container, opened.
 pub struct Detail {
-    /// Where it is, absolutely, which is what the payload is handed over from.
+    /// Where it is, absolutely, which is what the content file is handed over from.
     pub path: PathBuf,
     /// Its path as the row named it, relative to the `from` root.
     pub relative: String,
@@ -33,7 +33,7 @@ pub struct Detail {
 pub enum Outcome {
     /// Why it could not be read.
     Unreadable(String),
-    /// It was read. Boxed because a metadata document is two orders of
+    /// It was read. Boxed because a flyleaf document is two orders of
     /// magnitude larger than the string beside it, and an unboxed arm would
     /// make every `Outcome` that size whichever one it holds.
     Read(Box<Contents>),
@@ -41,21 +41,21 @@ pub enum Outcome {
 
 /// A container that was read.
 pub struct Contents {
-    /// The metadata, as the tree draws it.
+    /// The flyleaf, as the tree draws it.
     ///
     /// Mutable because `flyleaf::render` takes it that way — it is one widget
     /// serving an editor and this — and nothing here writes it back.
     /// `crate::policy::ReadOnly` is what stops the widget changing it at all.
-    pub metadata: DocumentMut,
-    /// The payload, as the card states it.
-    pub payload: Payload,
+    pub flyleaf: DocumentMut,
+    /// The content file, as the card states it.
+    pub content: ContentFile,
 }
 
-/// The payload, as the card states it.
-pub struct Payload {
-    /// The member `payload.file` names, escaped for display.
+/// The content file, as the card states it.
+pub struct ContentFile {
+    /// The member `content.file` names, escaped for display.
     ///
-    /// Escaped through `slpc::display_name`, which SPEC §3 requires: a payload
+    /// Escaped through `slpc::display_name`, which SPEC §3 requires: a content file
     /// called `report<U+202E>fdp.exe` reads as `reportfdp.exe` in a window that
     /// shows the bytes, because egui gives a bidirectional formatting character
     /// zero advance width. The name in the card is the one place a person looks
@@ -63,7 +63,7 @@ pub struct Payload {
     pub name: String,
     /// Its length uncompressed, read from the central directory.
     pub size: u64,
-    /// Why this build cannot decode the payload, where it cannot.
+    /// Why this build cannot decode the content file, where it cannot.
     ///
     /// SPEC §2.5 puts encryption and compression method outside conformance, so
     /// this is a fact about the build and not a verdict on the container. Asked
@@ -73,8 +73,8 @@ pub struct Payload {
     pub unreadable: Option<String>,
 }
 
-impl Payload {
-    /// Whether this build can decode the payload.
+impl ContentFile {
+    /// Whether this build can decode the content file.
     ///
     /// Not a promise that handing it over will succeed: the library says only
     /// that a decoder exists, and truncated bytes, a failed checksum and an i/o
@@ -139,16 +139,16 @@ impl Detail {
         }
     }
 
-    /// The payload, where there is one to hand over.
+    /// The content file, where there is one to hand over.
     #[must_use]
-    pub fn payload(&self) -> Option<&Payload> {
+    pub fn content(&self) -> Option<&ContentFile> {
         match &self.outcome {
             Outcome::Unreadable(_) => None,
-            Outcome::Read(contents) => Some(&contents.payload),
+            Outcome::Read(contents) => Some(&contents.content),
         }
     }
 
-    /// Put the payload in a directory, under its own name, and answer where.
+    /// Put the content file in a directory, under its own name, and answer where.
     ///
     /// The directory is the caller's to make and to remove. Nothing is ever
     /// written beside the container: a window that extracted into the directory
@@ -156,17 +156,17 @@ impl Detail {
     ///
     /// # Errors
     ///
-    /// When the container cannot be opened or its payload cannot be decoded,
-    /// when the payload's name will not resolve to a path inside `dir`, and
+    /// When the container cannot be opened or its content file cannot be decoded,
+    /// when the content file's name will not resolve to a path inside `dir`, and
     /// when the write fails. A container that was readable when the row was
     /// scanned can be any of these by the time somebody clicks it.
     pub fn extract_to(&self, dir: &Path) -> slpc::Result<PathBuf> {
         let mut container = slpc::Container::open(&self.path)?;
-        // `payload_path` is what keeps a member named `../x` or `C:\x` from
+        // `content_path` is what keeps a member named `../x` or `C:\x` from
         // deciding where this writes. The name is the container's and is not
         // this application's to trust.
-        let out = slpc::payload_path(dir, container.payload_name())?;
-        let mut reader = container.payload()?;
+        let out = slpc::content_path(dir, container.content_name())?;
+        let mut reader = container.content()?;
         let mut file = std::fs::File::create(&out)?;
         std::io::copy(&mut reader, &mut file)?;
         Ok(out)
@@ -176,15 +176,15 @@ impl Detail {
 impl Contents {
     fn of<R: std::io::Read + std::io::Seek>(container: &slpc::Container<R>) -> Self {
         Self {
-            metadata: container.metadata().clone(),
-            payload: Payload {
-                name: slpc::display_name(container.payload_name()).into_owned(),
+            flyleaf: container.flyleaf().clone(),
+            content: ContentFile {
+                name: slpc::display_name(container.content_name()).into_owned(),
                 // A central directory that will not say is not a reason to
                 // refuse the container: the card says zero and the rest of the
                 // pane is still worth reading.
-                size: container.payload_size().unwrap_or(0),
+                size: container.content_size().unwrap_or(0),
                 unreadable: container
-                    .check_payload_readable()
+                    .check_content_readable()
                     .err()
                     .map(|why| why.to_string()),
             },
@@ -194,55 +194,55 @@ impl Contents {
 
 #[cfg(test)]
 mod tests {
-    use super::Payload;
+    use super::ContentFile;
 
-    fn payload(size: u64) -> Payload {
-        Payload {
+    fn content_file(size: u64) -> ContentFile {
+        ContentFile {
             name: "a.pdf".to_owned(),
             size,
             unreadable: None,
         }
     }
 
-    /// Would catch the exact byte count being dropped once a payload is large
+    /// Would catch the exact byte count being dropped once a content file is large
     /// enough to scale, which is the number somebody opened the container to
     /// read and the one a rounded line cannot give back.
     #[test]
     fn a_scaled_size_still_states_the_bytes() {
-        let line = payload(1_536).size_line();
+        let line = content_file(1_536).size_line();
         assert!(line.contains("1.5 KiB"), "{line}");
         assert!(line.contains("1536"), "{line}");
     }
 
-    /// Would catch a payload under a kibibyte being scaled anyway, which would
+    /// Would catch a content file under a kibibyte being scaled anyway, which would
     /// read "0.9 KiB (900 bytes)" where the bytes alone are the whole answer.
     #[test]
-    fn a_small_payload_is_stated_in_bytes_alone() {
-        assert_eq!(payload(900).size_line(), "900 bytes");
-        assert_eq!(payload(1).size_line(), "1 byte");
+    fn a_small_content_file_is_stated_in_bytes_alone() {
+        assert_eq!(content_file(900).size_line(), "900 bytes");
+        assert_eq!(content_file(1).size_line(), "1 byte");
         // Conformant under SPEC §2.3, and the card says nothing more about it.
-        assert_eq!(payload(0).size_line(), "0 bytes");
+        assert_eq!(content_file(0).size_line(), "0 bytes");
     }
 
     /// Would catch the scaling stopping at one unit, which would report a
-    /// gibibyte payload as four figures of mebibytes.
+    /// gibibyte content file as four figures of mebibytes.
     #[test]
     fn scaling_climbs_past_the_first_unit() {
-        assert!(payload(5 * 1024 * 1024).size_line().contains("5.0 MiB"));
-        assert!(payload(3 * 1024 * 1024 * 1024)
+        assert!(content_file(5 * 1024 * 1024).size_line().contains("5.0 MiB"));
+        assert!(content_file(3 * 1024 * 1024 * 1024)
             .size_line()
             .contains("3.0 GiB"));
     }
 
-    /// Would catch a payload this build cannot decode being offered anyway,
+    /// Would catch a content file this build cannot decode being offered anyway,
     /// which is a button that does not work rather than a button that is not
     /// there.
     #[test]
-    fn a_payload_that_cannot_be_decoded_is_not_offered() {
-        assert!(payload(10).can_be_opened());
-        let encrypted = Payload {
+    fn a_content_file_that_cannot_be_decoded_is_not_offered() {
+        assert!(content_file(10).can_be_opened());
+        let encrypted = ContentFile {
             unreadable: Some("encrypted".to_owned()),
-            ..payload(10)
+            ..content_file(10)
         };
         assert!(!encrypted.can_be_opened());
     }

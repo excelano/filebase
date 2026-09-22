@@ -1,6 +1,6 @@
 .TH FILEBASE 1 "September 2026" "filebase @VERSION@" "User Commands"
 .SH NAME
-filebase \- query a folder of Slipcase containers by their metadata
+filebase \- query a folder of Slipcase containers by their flyleaf
 .SH SYNOPSIS
 .B filebase
 .RI [ DIRECTORY ]
@@ -8,13 +8,13 @@ filebase \- query a folder of Slipcase containers by their metadata
 .B Filebase
 opens a window over a folder of
 .B .slpc
-containers. It binds the folder, runs a SlipQL query over the metadata of the
+containers. It binds the folder, runs a SlipQL query over the flyleaf of the
 containers in it, and shows what answered as rows: one row per container, one
-column per metadata key. Selecting a row shows that container's payload and its
-full metadata beside the table, and offers to hand the payload to whatever the
+column per flyleaf key. Selecting a row shows that container's content file and its
+full flyleaf beside the table, and offers to hand the content file to whatever the
 system opens that kind of file with.
 .PP
-It reads metadata in place and never unpacks a payload to answer a query. It
+It reads the flyleaf in place and never unpacks a content file to answer a query. It
 keeps no index and no state, so every query is a fresh scan and the answer is
 what is on disk now. It never writes a container.
 .SH OPTIONS
@@ -44,15 +44,15 @@ The bound folder supplies the
 .B from
 clause, so a query typed in the window may leave it out; a
 .B from
-written in the query wins. Columns are metadata keys, with dots into nested
+written in the query wins. Columns are flyleaf keys, with dots into nested
 tables and brackets into arrays.
 .B @path
 is the container's path under the bound folder, and
 .B "select *"
-gives that and then every metadata key across the containers that answered.
+gives that and then every flyleaf key across the containers that answered.
 .PP
 A key a container does not have renders as an empty cell rather than failing
-the query, because metadata keys are ad hoc by design. A file that cannot be
+the query, because flyleaf keys are ad hoc by design. A file that cannot be
 read is skipped and reported under the rows, and so is a comparison that
 crossed types.
 .SH EXIT STATUS

@@ -351,10 +351,10 @@ fn notices_of(tally: &Tally, truncated: bool) -> Notices {
 
 /// One cell, as the table draws it.
 ///
-/// A column a row does not have is blank rather than absent, because metadata
+/// A column a row does not have is blank rather than absent, because flyleaf
 /// keys are ad hoc by design and a query that projects one is asking whether it
 /// is there. `slipql::Value`'s own `Display` writes a string as itself and
-/// everything else as TOML, which is what a person who authored the metadata
+/// everything else as TOML, which is what a person who authored the flyleaf
 /// would recognise.
 #[must_use]
 pub fn cell(row: &Row, column: &str) -> String {

@@ -3,7 +3,7 @@
 //! Everything here is what the window needs to know and none of it draws.
 //! [`query`] runs a query on a thread of its own and streams rows back,
 //! [`detail`] is what one container says about itself, and [`policy`] is the
-//! rule that the metadata tree is read and not written. `src/main.rs` is the
+//! rule that the flyleaf tree is read and not written. `src/main.rs` is the
 //! drawing.
 //!
 //! Nothing in this crate parses a container or a query: every row comes from

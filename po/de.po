@@ -3,15 +3,16 @@
 # This file is distributed under the same licence as the filebase package.
 #
 # The Slipcase vocabulary follows slipcase-desktop's German so that a person
-# who uses both reads one set of words: a payload is a Nutzlast, a container
-# is a Container, and an ellipsis takes the space German typography puts
-# before it.
+# who uses both reads one set of words: a content file is an Inhaltsdatei, a
+# container is a Container, "Flyleaf" stays the adopted loanword it already
+# is in that repository's shipped store listing (das Flyleaf), and an
+# ellipsis takes the space German typography puts before it.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: filebase\n"
 "Report-Msgid-Bugs-To: https://github.com/excelano/filebase/issues\n"
-"POT-Creation-Date: 2026-09-21 11:09-0500\n"
+"POT-Creation-Date: 2026-09-22 14:07-0500\n"
 "PO-Revision-Date: 2026-09-21 11:00+0000\n"
 "Last-Translator: David M. Anderson\n"
 "Language-Team: German\n"
@@ -31,85 +32,85 @@ msgstr[1] "{n} Byte"
 msgid "{size} {unit} ({n} bytes)"
 msgstr "{size} {unit} ({n} Byte)"
 
-#: src/main.rs:237
+#: src/main.rs:249 src/main.rs:684
 msgid "{path} is not a folder."
 msgstr "{path} ist kein Ordner."
 
-#: src/main.rs:300
+#: src/main.rs:312
 msgid "Choose a folder"
 msgstr "Ordner wählen"
 
-#: src/main.rs:331
-msgid "Cannot make somewhere to put the payload: {why}"
-msgstr "Kann keinen Ort für die Nutzlast anlegen: {why}"
-
 #: src/main.rs:343
+msgid "Cannot make somewhere to put the content file: {why}"
+msgstr "Kann keinen Ort für die Inhaltsdatei anlegen: {why}"
+
+#: src/main.rs:355
 msgid "Nothing opened it: {why}"
 msgstr "Nichts hat sie geöffnet: {why}"
 
-#: src/main.rs:350
-msgid "Cannot read the payload: {why}"
-msgstr "Kann die Nutzlast nicht lesen: {why}"
+#: src/main.rs:362
+msgid "Cannot read the content file: {why}"
+msgstr "Kann die Inhaltsdatei nicht lesen: {why}"
 
-#: src/main.rs:423
+#: src/main.rs:435
 msgid "Open folder…"
 msgstr "Ordner öffnen …"
 
-#: src/main.rs:427
+#: src/main.rs:439
 msgid "recursive"
 msgstr "rekursiv"
 
-#: src/main.rs:428
+#: src/main.rs:440
 msgid "Descend into subdirectories."
 msgstr "Auch Unterordner einbeziehen."
 
-#: src/main.rs:440
+#: src/main.rs:452
 msgid "No folder chosen."
 msgstr "Kein Ordner gewählt."
 
-#: src/main.rs:450
+#: src/main.rs:462
 msgid "Run"
 msgstr "Ausführen"
 
-#: src/main.rs:484
+#: src/main.rs:496
 msgid "No query has been run."
 msgstr "Es wurde noch keine Abfrage ausgeführt."
 
-#: src/main.rs:498
+#: src/main.rs:510
 msgid "What the scan noticed"
 msgstr "Was beim Durchsuchen auffiel"
 
-#: src/main.rs:513
+#: src/main.rs:525
 msgid "Choose a folder, then run a query."
 msgstr "Einen Ordner wählen, dann eine Abfrage ausführen."
 
-#: src/main.rs:520
+#: src/main.rs:532
 msgid "Scanning…"
 msgstr "Wird durchsucht …"
 
-#: src/main.rs:522
+#: src/main.rs:534
 msgid "Nothing matched."
 msgstr "Keine Treffer."
 
-#: src/main.rs:583
+#: src/main.rs:595
 msgid "Select a row."
 msgstr "Eine Zeile auswählen."
 
-#: src/main.rs:598
-msgid "Payload"
-msgstr "Nutzlast"
+#: src/main.rs:610 src/main.rs:680
+msgid "Content file"
+msgstr "Inhaltsdatei"
 
-#: src/main.rs:603
+#: src/main.rs:615
 msgid "This build cannot decode it: {why}"
 msgstr "Diese Fassung kann sie nicht dekodieren: {why}"
 
-#: src/main.rs:614
-msgid "Open payload"
-msgstr "Nutzlast öffnen"
+#: src/main.rs:626 src/main.rs:681
+msgid "Open content file"
+msgstr "Inhaltsdatei öffnen"
 
-#: src/main.rs:621
-msgid "Metadata"
-msgstr "Metadaten"
+#: src/main.rs:633
+msgid "Flyleaf"
+msgstr "Flyleaf"
 
 #: src/query.rs:266 src/query.rs:334
 msgid "{n} row"

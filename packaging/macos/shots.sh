@@ -67,8 +67,8 @@ AS_ARGS=yes
 # not know — the same way `DOCUMENT` is a fixed path in the applications that
 # photograph a document.
 #
-# Two corpora, because this application's frames are almost entirely container
-# *metadata*: a German window over English titles, owners and tags would be a
+# Two corpora, because this application's frames are almost entirely a
+# container's *flyleaf*: a German window over English titles, owners and tags would be a
 # German frame of mostly English pixels, which is the trap the listing rules
 # exist for. `demo-corpus.sh` says why the German file names sort where the
 # English ones do, and it is why the coordinates below serve both sets.
@@ -126,7 +126,7 @@ QUERY='select @path, title, status, governance.owner'
 QUERY_NOTICES='select @path, title, pages where pages > 10'
 shots() {
     # The answer to a question, with a row selected: five rows where the tick
-    # box was the only thing touched, a column per metadata key, and the
+    # box was the only thing touched, a column per flyleaf key, and the
     # container on the right. This frame has to carry the listing, so it is
     # first. A frame of Filebase with no query run is a frame of an empty
     # window, which is this application's version of the trap Apple rejected
@@ -136,7 +136,7 @@ shots() {
         --click $QUERY_BOX --key cmd+a --type "$QUERY" --key return \
         --click $FIRST_ROW
 
-    # A container in full: the payload card and the whole description as a
+    # A container in full: the content file card and the whole description as a
     # tree. The richest of the five is selected so the pane is not half empty,
     # and field-notes' blank governance.owner is above it in the same frame.
     shot 02-a-container-in-full \

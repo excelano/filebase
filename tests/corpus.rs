@@ -21,25 +21,25 @@ use filebase::detail::Outcome;
 use filebase::query::{Run, Update};
 use filebase::Detail;
 
-/// Pack one container under `dir`, with `metadata` as its TOML.
-fn pack(dir: &Path, name: &str, metadata: &str) {
+/// Pack one container under `dir`, with `flyleaf` as its TOML.
+fn pack(dir: &Path, name: &str, flyleaf: &str) {
     std::fs::create_dir_all(dir).unwrap();
-    let payload = dir.join(name);
-    std::fs::write(&payload, format!("the bytes of {name}")).unwrap();
-    // `[payload]` goes last, because a TOML table header takes everything after
-    // it: with the header first, `title` and `status` land as `payload.title`
-    // and `payload.status`, every query against them finds nothing, and the
+    let content = dir.join(name);
+    std::fs::write(&content, format!("the bytes of {name}")).unwrap();
+    // `[content]` goes last, because a TOML table header takes everything after
+    // it: with the header first, `title` and `status` land as `content.title`
+    // and `content.status`, every query against them finds nothing, and the
     // rows come back empty rather than wrong-looking. Cost an hour the first
     // time these fixtures were written.
     let doc: slpc::toml_edit::DocumentMut = format!(
-        "slipcase_version = \"{}\"\n{metadata}\n[payload]\nfile = \"{name}\"\n",
+        "slipcase_version = \"{}\"\n{flyleaf}\n[content]\nfile = \"{name}\"\n",
         slpc::VERSION
     )
     .parse()
     .unwrap();
     let out = std::fs::File::create(dir.join(format!("{name}.slpc"))).unwrap();
-    slpc::pack_file(&payload, doc, out).unwrap();
-    std::fs::remove_file(&payload).unwrap();
+    slpc::pack_file(&content, doc, out).unwrap();
+    std::fs::remove_file(&content).unwrap();
 }
 
 /// A tree with something of every shape the window has to survive.
@@ -77,7 +77,7 @@ pages = 12
 "#,
     );
     // A container whose `pages` is a string where the others have an integer.
-    // Ad-hoc keys are normal in metadata, so this is not a malformed file — it
+    // Ad-hoc keys are normal in a flyleaf, so this is not a malformed file — it
     // is the case the mismatch tally exists for.
     pack(
         &dir.join("2026").join("q3"),
@@ -178,7 +178,7 @@ fn a_filter_reaches_the_scan() {
         vec!["Field notes", "Master services agreement", "Renewal, 2026"]
     );
     // A row that has no such key renders blank rather than dropping the row or
-    // failing the query, which is what makes ad-hoc metadata queryable at all:
+    // failing the query, which is what makes ad-hoc flyleaf keys queryable at all:
     // only two of these three containers carry `governance.owner`.
     let run = run_to_end(
         root.path(),
@@ -235,7 +235,7 @@ fn what_the_scan_could_not_use_is_reported() {
 }
 
 /// Would catch a comparison across types being silently unknown, which is what
-/// hides a metadata authoring mistake: `pages = "many"` against `pages > 10` is
+/// hides a flyleaf authoring mistake: `pages = "many"` against `pages > 10` is
 /// neither true nor false, and the row's absence is the only evidence.
 #[test]
 fn a_comparison_across_types_is_counted_and_said() {
@@ -276,12 +276,12 @@ fn a_selected_row_opens_the_container_the_row_names() {
     let Outcome::Read(contents) = &detail.outcome else {
         panic!("the container the scan just read should open");
     };
-    assert_eq!(contents.payload.name, "q3.xlsx");
-    assert!(contents.payload.can_be_opened());
+    assert_eq!(contents.content.name, "q3.xlsx");
+    assert!(contents.content.can_be_opened());
     assert_eq!(
-        contents.metadata["title"].as_str(),
+        contents.flyleaf["title"].as_str(),
         Some("Q3 report"),
-        "the pane shows the container's own metadata"
+        "the pane shows the container's own flyleaf"
     );
 }
 
@@ -296,24 +296,24 @@ fn a_container_that_will_not_open_is_a_sentence_and_not_a_panic() {
         Outcome::Unreadable(why) => assert!(!why.is_empty()),
         Outcome::Read(_) => panic!("fifteen bytes of text are not a container"),
     }
-    assert!(detail.payload().is_none());
+    assert!(detail.content().is_none());
 
     let gone = Detail::open(root.path(), "nothing/here.slpc");
     assert!(matches!(gone.outcome, Outcome::Unreadable(_)));
 }
 
-/// Would catch the payload being written beside the container it came from,
+/// Would catch the content file being written beside the container it came from,
 /// which would change the directory the window was asked to look at — and would
 /// do it on a directory somebody may have no business writing to.
 #[test]
-fn a_payload_is_handed_over_from_somewhere_else() {
+fn a_content_file_is_handed_over_from_somewhere_else() {
     let root = corpus();
     let scratch = tempfile::tempdir().unwrap();
 
     let detail = Detail::open(root.path(), "msa.pdf.slpc");
     let out = detail.extract_to(scratch.path()).unwrap();
 
-    // Canonicalised on both sides. `slpc::payload_path` resolves the directory,
+    // Canonicalised on both sides. `slpc::content_path` resolves the directory,
     // and on Windows that turns `C:\Users\RUNNER~1\...` into the verbatim
     // `\\?\C:\Users\runneradmin\...`, which is the same directory spelled the
     // way the file system answers. Windows CI caught this too.

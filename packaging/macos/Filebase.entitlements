@@ -14,7 +14,7 @@
   the containers inside it. The sandbox grants a folder recursively, so one
   choice covers the whole tree a recursive query walks.
 
-  The payload handed over by Open needs no entitlement of its own. It is
+  The content file handed over by Open needs no entitlement of its own. It is
   written inside the application's own container, which is always writable, and
   handed to another application through the platform's own open mechanism —
   which is the platform launching that application, not this one reaching

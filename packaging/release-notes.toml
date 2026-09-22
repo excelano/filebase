@@ -19,25 +19,32 @@ version = "0.1.2"
 
 [locales."de-de"]
 whats-new = """
-Die erste Fassung. Zeigen Sie Filebase auf einen Ordner voller \
-Slipcase-Container und fragen Sie, welche davon sagen, was Sie suchen; was \
-antwortet, kommt als Zeilen zurück, eine je Container und eine Spalte je \
-Metadatenschlüssel. Wählen Sie eine Zeile, um die ganze Beschreibung dieses \
-Containers neben der Tabelle zu lesen, und geben Sie sein Dokument an das \
-Programm weiter, das diese Art von Datei öffnet.
+Das Containerformat wechselt von 1.0 zu 1.1. Zwei Namen ändern sich in \
+jedem Container: Die Beschreibungsdatei heißt jetzt slipcase.flyleaf.toml \
+statt slipcase.metadata.toml, und der Schlüssel, der die beschriebene \
+Datei benennt, heißt content.file statt payload.file. Filebase benennt \
+dieselben zwei Dinge auch in der eigenen Oberfläche um: aus den Metadaten \
+wird das Flyleaf, aus der Nutzlast die Inhaltsdatei.
 
-Es schreibt nie einen Container, führt keinen Index und baut keinerlei \
-Netzwerkverbindung auf.
+Ein Container aus einer früheren Version trägt noch die Namen von 1.0, \
+daher kann diese Version ihn nicht lesen: Er erscheint als übersprungene \
+Zeile mit genanntem Grund, statt als Ergebnis. Dabei geht nichts verloren: \
+Eine .slpc ist im Kern ein gewöhnliches ZIP-Archiv, jedes Archivprogramm \
+öffnet sie und entpackt beide Dateien direkt.
 """
 
 [locales."en-us"]
 whats-new = """
-The first release. Point Filebase at a folder of Slipcase containers and ask \
-which of them say what you are looking for; what answers comes back as rows, \
-one per container and one column per metadata key. Select a row to read that \
-container's whole description beside the table, and hand its document to \
-whatever opens that kind of file.
+The container format moves from 1.0 to 1.1. Two names inside every \
+container change: the description file is now slipcase.flyleaf.toml \
+rather than slipcase.metadata.toml, and the key naming the file it \
+describes is content.file rather than payload.file. Filebase renames the \
+same two things throughout its own interface: "metadata" becomes \
+"flyleaf," "payload" becomes "content file."
 
-It never writes a container, keeps no index, and makes no network connection \
-of any kind.
+A container made by an earlier version still carries 1.0's names, so this \
+version cannot read it: it shows up as a skipped row, with the reason \
+named, rather than as a result. Nothing in the file is lost: a .slpc is an \
+ordinary ZIP archive underneath, so any archive tool opens one and \
+extracts both files directly.
 """
