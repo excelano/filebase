@@ -1,5 +1,21 @@
 filebase (0.2.0) unstable; urgency=low
 
+  * Rewrap the extended description: content file pushed a line to 82 chars
+  * ship sync: take-shots.sh's dark-mode wait now polls and reports why
+  * Release 0.2.0
+  * msix joins the targets: the first Microsoft Store submission published
+  * The two members 1.1 renames, carried through: payload becomes content file
+  * The Windows recipe is ASCII, and the umlaut is a code point
+  * The tick box is where the language puts it
+  * A corpus directory per language, or the second run eats the first
+  * German
+  * What a store release says it changed
+  * The Windows set lands under its locale
+
+ -- David M. Anderson <david.anderson@excelano.com>  Tue, 22 Sep 2026 17:08:09 -0500
+
+filebase (0.2.0) unstable; urgency=low
+
   * msix joins the targets: the first Microsoft Store submission published
   * The two members 1.1 renames, carried through: payload becomes content file
   * The Windows recipe is ASCII, and the umlaut is a code point
