@@ -1,3 +1,9 @@
+filebase (0.2.1) unstable; urgency=low
+
+  * Release notes for the German-listing fix: nothing else changed
+
+ -- David M. Anderson <david.anderson@excelano.com>  Tue, 22 Sep 2026 20:40:04 -0500
+
 filebase (0.2.0) unstable; urgency=low
 
   * Rewrap the extended description: content file pushed a line to 82 chars
