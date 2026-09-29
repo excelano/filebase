@@ -5,3 +5,6 @@ Cargo.lock.orig
 
 # The scratch file a session leaves behind, as slipql keeps it.
 next.txt
+ship.toml
+packaging/windows/screenshots/
+packaging/macos/screenshots/
