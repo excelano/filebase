@@ -1,3 +1,15 @@
+filebase (0.2.2) unstable; urgency=low
+
+  * Close the quote on the Windows recipe's executable line
+  * Screenshot recipes: wait for the window instead of five seconds; find the Windows executable through cargo
+  * Release notes for 0.2.2
+  * Write the content file through Destination, so a failed copy leaves nothing and a reopen replaces by rename
+  * Linux icon: the rounded mark, as Comma's; Windows and Mac keep the square one
+  * Retire the release workflows
+  * Move Microsoft's Notes for certification into the field ship pushes
+
+ -- David M. Anderson <david.anderson@excelano.com>  Mon, 05 Oct 2026 15:50:40 -0500
+
 filebase (0.2.1) unstable; urgency=low
 
   * Release notes for the German-listing fix: nothing else changed
