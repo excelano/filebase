@@ -16,8 +16,7 @@
 # apple.keywords 100 including the commas, description 4,000 — the Microsoft
 # Store allows 10,000 and this is written to Apple's — microsoft.short-description
 # 500, microsoft.features 20 of 200, microsoft.keywords 7 of 30,
-# microsoft-review-notes 4,000. apple-review-notes joins this list once
-# appstore joins ship.conf's targets - see its own comment there.
+# apple-review-notes and microsoft-review-notes 4,000 each.
 #
 # What is *not* here is what changed in this release. That is
 # release-notes.toml, which is rewritten every time; this changes when the
@@ -36,6 +35,29 @@
 #
 # `store_locales` in ship.conf gains `de-de` when the store targets land.
 
+apple-review-notes = """
+Filebase reads Slipcase containers: ordinary ZIP files that hold one document plus a small TOML file describing it. It shows an empty table until it is given a folder that holds some, so please start with the sample below rather than with an arbitrary folder — an empty result is what this application correctly does with a folder that has no containers in it, and it looks like a failure.
+
+A folder to test with:
+https://excelano.com/filebase/filebase-sample-containers.zip
+
+Unpack it anywhere. It contains "Contracts", five containers three levels deep.
+
+To see the application work:
+1. Press "Open folder..." and choose the unpacked "Contracts" folder.
+2. Tick "recursive", so the two subfolders are included.
+3. Type this into the query box and press Enter:
+       select @path, title, status, governance.owner
+   Five rows come back, one per container, one column per key. The "Field notes" row has an empty owner cell on purpose: a key a container does not have is an empty cell rather than a failed query.
+4. Click any row. The panel on the right shows what the content file is called, how large it is, and the container's whole description as a tree. "Open content file" hands the document to whatever your system has registered for that kind of file.
+5. To see the reporting, run:
+       select @path, title, pages where pages > 10
+   Two rows come back, and the line under them reads "2 rows - 1 skipped - 1 comparison across types". The skip is "broken.slpc", a file named like a container that is not one. The cross-type comparison is a container whose "pages" is the word "many" rather than a number.
+
+No account, no sign-in and no configuration are needed, and there is nothing to enter. The application makes no network connection of any kind, stores nothing on disk, and never writes a container — there is no Save in it.
+
+The query language is SlipQL, documented at https://excelano.com/filebase/ and specified with the format at https://slipcaseformat.org/spec/.
+"""
 microsoft-review-notes = """
 Filebase is a desktop window over a folder of Slipcase containers, queried in SlipQL. It never writes a container - there is no Save - and no account, sign-in or network connection of any kind is needed to test it.
 
