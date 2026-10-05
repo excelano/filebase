@@ -167,8 +167,13 @@ impl Detail {
         // this application's to trust.
         let out = slpc::content_path(dir, container.content_name())?;
         let mut reader = container.content()?;
-        let mut file = std::fs::File::create(&out)?;
-        std::io::copy(&mut reader, &mut file)?;
+        // Through `Destination` so that a copy failing partway leaves nothing,
+        // which SPEC 3 requires, and so that opening the same content file
+        // again replaces it by rename rather than truncating a file a viewer
+        // may still have open.
+        let mut landing = slpc::Destination::new(&out, true)?;
+        std::io::copy(&mut reader, landing.writer())?;
+        landing.commit()?;
         Ok(out)
     }
 }

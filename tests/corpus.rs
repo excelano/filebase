@@ -337,6 +337,34 @@ fn a_content_file_is_handed_over_from_somewhere_else() {
     );
 }
 
+/// Would catch a content file that fails partway through being left on disk,
+/// which SPEC 3 forbids: what a failed extraction created is removed.
+#[test]
+fn a_content_file_that_fails_to_inflate_leaves_nothing() {
+    let root = tempfile::tempdir().unwrap();
+    pack(root.path(), "torn.txt", "");
+
+    // The CRC-32 in the content file's central directory entry, flipped, so the
+    // container still opens and the copy fails only once the bytes are read.
+    let path = root.path().join("torn.txt.slpc");
+    let mut bytes = std::fs::read(&path).unwrap();
+    let name = bytes
+        .windows(b"torn.txt".len())
+        .rposition(|w| w == b"torn.txt")
+        .unwrap();
+    bytes[name - 46 + 16] ^= 0xFF;
+    std::fs::write(&path, bytes).unwrap();
+
+    let scratch = tempfile::tempdir().unwrap();
+    let detail = Detail::open(root.path(), "torn.txt.slpc");
+    assert!(detail.extract_to(scratch.path()).is_err());
+    let left: Vec<PathBuf> = std::fs::read_dir(scratch.path())
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .collect();
+    assert!(left.is_empty(), "a failed extraction left {left:?}");
+}
+
 /// Would catch `limit` being read by the window rather than by the scan, which
 /// would be a scan that reads the whole tree and throws most of it away.
 #[test]
