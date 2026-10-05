@@ -167,17 +167,23 @@ shots() {
 # Where the corpus is copied to before it is photographed, and why it is copied
 # at all: the folder bar shows the path it was given, and a store screenshot
 # reading /Users/runner/work/filebase/filebase/dist/corpus tells a customer
-# about a build machine. Under Documents it reads like somebody's own folder.
+# about a build machine. In the home folder it reads like somebody's own folder.
+#
+# **Not under Documents, Desktop or Downloads.** macOS asks the user before an
+# application reads one of those, ties the answer to the exact binary, and an
+# application waiting on the question has no window, so a screenshot run would
+# need a person at the Mac to click Allow for every build. The home folder
+# itself is not asked about.
 #
 # **Staged here rather than through take-shots.sh's `staged_name`.** That does a
 # flat `cp "$src"/*`, which omits directories, and this corpus is three levels
-# deep — the whole point of the recursive tick box. `cp -R` of the folder itself
+# deep - the whole point of the recursive tick box. `cp -R` of the folder itself
 # is what a tree needs.
 # The folder's own name is translated too. It is the widest thing in the folder
 # bar and the first thing read in the frame, so an English one over a German
 # window would undo the corpus.
-STAGED_EN="${HOME}/Documents/Contracts"
-STAGED_DE="${HOME}/Documents/Verträge"
+STAGED_EN="${HOME}/Contracts"
+STAGED_DE="${HOME}/Verträge"
 
 stage_corpus() {
     corpus=$1
