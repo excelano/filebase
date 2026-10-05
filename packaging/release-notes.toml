@@ -12,10 +12,10 @@
 # Nothing else reads this. The GitHub release, the Debian changelog and the
 # AppStream entry take commit subjects.
 
-version = "0.2.1"
+version = "0.2.2"
 
 [locales]
 [locales.de-de]
-whats-new = "An der Anwendung ändert sich in dieser Version nichts. Sie dient allein dazu, der Store-Auflistung Deutsch hinzuzufügen, was erst diese Fassung schreiben kann."
+whats-new = "Schlägt Inhaltsdatei öffnen mittendrin fehl, bleibt keine unvollständige Datei mehr zurück: Die Datei wird ganz oder gar nicht geschrieben, und ein erneutes Öffnen ersetzt sie, statt eine Datei umzuschreiben, die ein anderes Programm noch geöffnet hat."
 [locales.en-us]
-whats-new = "Nothing about the application changes in this release. It exists to add German to the store listing, which this build is the first able to write."
+whats-new = "If Open content file fails partway, no half-written file is left behind: the file is written whole or not at all, and opening it again replaces it instead of rewriting a file another program may still have open."
