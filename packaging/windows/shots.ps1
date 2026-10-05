@@ -94,7 +94,19 @@ $CORPUS = if ($Lang -eq 'de') {
 # extension is registered to them; nothing is registered to this one, because it
 # opens a folder and Windows has no way to declare that. `-Launch exe` is the
 # driver's mode for exactly this, and odox uses it for the same reason.
-$EXE = Join-Path $root 'target\release\filebase.exe'
+# Cargo is asked where its target directory is rather than guessed at, because a
+# Cargo configuration file or an environment variable moves it.
+function Get-TargetDir {
+    if (Get-Command cargo -ErrorAction SilentlyContinue) {
+        Push-Location $root
+        try {
+            $meta = cargo metadata --format-version 1 --no-deps 2>$null | ConvertFrom-Json
+            if ($meta) { return $meta.target_directory }
+        } finally { Pop-Location }
+    }
+    return (Join-Path $root 'target')
+}
+$EXE = Join-Path (Get-TargetDir) 'release\filebase.exe
 
 # The process the window belongs to, which the driver stops first so the frame
 # holds this run's window and not a previous one's.

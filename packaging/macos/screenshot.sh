@@ -330,7 +330,16 @@ set -- -a "$app"
 [ -n "$lang" ] && set -- "$@" --env "POTEXT_LANG=${lang}"
 [ "$as_args" = yes ] && set -- "$@" --args
 open "$@" "$document"
-sleep 5
+# Until the application has a window, rather than for a fixed time: this one
+# scans a folder before it opens one.
+waited=0
+while [ "$waited" -lt 30 ]; do
+    count=$(osascript -e "tell application \"System Events\" to count windows of (first process whose name contains \"${process}\")" 2>/dev/null || echo 0)
+    [ "${count:-0}" -ge 1 ] 2>/dev/null && break
+    waited=$((waited + 1))
+    sleep 1
+done
+sleep 2
 
 # The refusal carries what osascript said rather than naming a cause. It used
 # to say "is Accessibility granted?" for every failure, which sent somebody
