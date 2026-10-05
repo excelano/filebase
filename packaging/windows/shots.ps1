@@ -106,7 +106,7 @@ function Get-TargetDir {
     }
     return (Join-Path $root 'target')
 }
-$EXE = Join-Path (Get-TargetDir) 'release\filebase.exe
+$EXE = Join-Path (Get-TargetDir) 'release\filebase.exe'
 
 # The process the window belongs to, which the driver stops first so the frame
 # holds this run's window and not a previous one's.
