@@ -1,3 +1,11 @@
+slipcase-query (0.3.0) unstable; urgency=low
+
+  * Rename to Slipcase Query
+  * Mac screenshots: stage the demo folder in the home folder, which macOS does not ask permission for
+  * Add the reviewer's notes for Apple to the listing, with the content file named as the app names it
+
+ -- David M. Anderson <david.anderson@excelano.com>  Tue, 06 Oct 2026 17:32:27 -0500
+
 slipcase-query (0.2.2) unstable; urgency=low
 
   * Close the quote on the Windows recipe's executable line
