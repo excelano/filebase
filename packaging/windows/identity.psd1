@@ -22,7 +22,7 @@
     # listing URL is built from.
     #
     #   Get-AppxPackage Excelano.SlipcaseQuery
-    #   https://apps.microsoft.com/detail/<StoreId>
+    #   https://apps.microsoft.com/detail/9NCPS73RST80
     PackageFamilyName = 'Excelano.SlipcaseQuery_nbxmgv0sk86m4'
-    StoreId = ''
+    StoreId = '9NCPS73RST80'
 }
