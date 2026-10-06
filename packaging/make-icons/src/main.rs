@@ -18,7 +18,7 @@
 //! rule those followed is that an application opening two kinds of file draws
 //! three icons, because a file type draws its own icon by its own mechanism on
 //! every platform and pointing both types at the application's drawing puts one
-//! picture on both. Filebase opens a *folder*. It registers no file type, so
+//! picture on both. Slipcase Query opens a *folder*. It registers no file type, so
 //! there is nothing to draw but the application.
 //!
 //! Everything lands in `packaging/icons/` rather than in a platform's arm.
@@ -157,18 +157,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // other, because the corner is a drawing decision and a regex over somebody
     // else's markup is not where a drawing decision belongs. The square's
     // comment says which of the two is the source of record.
-    let square = read(&icons.join("filebase-square.svg"))?;
-    let rounded = read(&icons.join("filebase-rounded.svg"))?;
+    let square = read(&icons.join("slipcase-query-square.svg"))?;
+    let rounded = read(&icons.join("slipcase-query-rounded.svg"))?;
 
     // Every icon is the rounded drawing. A store masks what it is handed and so
     // wants the square; everything that draws what it is given — an icon
     // directory, an icon family, a launcher — wants the corner already there.
-    write_ico(&rounded, &icons.join("filebase.ico"))?;
-    write_icns(&rounded, &icons.join("filebase.icns"))?;
+    write_ico(&rounded, &icons.join("slipcase-query.ico"))?;
+    write_icns(&rounded, &icons.join("slipcase-query.icns"))?;
 
     for (shape, tree) in [("square", &square), ("rounded", &rounded)] {
         for &size in LISTING_SIZES {
-            let name = format!("filebase-{shape}-{size}.png");
+            let name = format!("slipcase-query-{shape}-{size}.png");
             write_png(tree, size, &icons.join(&name))?;
         }
     }
@@ -189,11 +189,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // The icon directory the window reads at startup and the installer
     // registers, beside the manifest that names the assets.
-    write_ico(&rounded, &windows.join("filebase.ico"))?;
+    write_ico(&rounded, &windows.join("slipcase-query.ico"))?;
 
     println!(
-        "wrote filebase.ico and filebase.icns into {}, {} listing squares beside them, \
-         and {assets} package assets plus filebase.ico into {}",
+        "wrote slipcase-query.ico and slipcase-query.icns into {}, {} listing squares beside them, \
+         and {assets} package assets plus slipcase-query.ico into {}",
         icons.display(),
         LISTING_SIZES.len() * 2,
         windows.display()

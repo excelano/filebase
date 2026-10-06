@@ -5,7 +5,7 @@
 # **No media type, and no dependency on another Slipcase package.** Slipcase
 # Desktop and Slipcase Open open a document, so they associate themselves with
 # `.slpc` and depend on `slipcase-common` to declare the type once for every
-# product that reads it. Filebase is handed a folder, declares no file type,
+# product that reads it. Slipcase Query is handed a folder, declares no file type,
 # and depends on nothing of ours.
 #
 # A binary package rather than a source package. Everything here is one static
@@ -44,7 +44,7 @@ done
 if [ -z "$binary" ]; then
     target_dir=$(cd "$root" && cargo metadata --format-version 1 --no-deps |
         sed -n 's/.*"target_directory":"\([^"]*\)".*/\1/p')
-    binary="${target_dir}/release/filebase"
+    binary="${target_dir}/release/slipcase-query"
 fi
 [ -x "$binary" ] || {
     echo "build-deb.sh: no executable at $binary — run 'cargo build --release' first" >&2
@@ -99,7 +99,7 @@ if [ -n "$want" ] && [ "$machine" != "$want" ]; then
     exit 1
 fi
 
-name="filebase_${version}_${arch}"
+name="slipcase-query_${version}_${arch}"
 
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
@@ -114,14 +114,14 @@ mkdir -p \
     "${stage}/usr/share/applications" \
     "${stage}/usr/share/icons/hicolor/scalable/apps" \
     "${stage}/usr/share/man/man1" \
-    "${stage}/usr/share/doc/filebase"
+    "${stage}/usr/share/doc/slipcase-query"
 
-install -m 0755 "$binary" "${stage}/usr/bin/filebase"
-install -m 0644 "${here}/../linux/filebase.desktop" \
-    "${stage}/usr/share/applications/filebase.desktop"
-install -m 0644 "${here}/../linux/icons/filebase.svg" \
-    "${stage}/usr/share/icons/hicolor/scalable/apps/filebase.svg"
-install -m 0644 "${root}/LICENSE" "${stage}/usr/share/doc/filebase/copyright"
+install -m 0755 "$binary" "${stage}/usr/bin/slipcase-query"
+install -m 0644 "${here}/../linux/slipcase-query.desktop" \
+    "${stage}/usr/share/applications/slipcase-query.desktop"
+install -m 0644 "${here}/../linux/icons/slipcase-query.svg" \
+    "${stage}/usr/share/icons/hicolor/scalable/apps/slipcase-query.svg"
+install -m 0644 "${root}/LICENSE" "${stage}/usr/share/doc/slipcase-query/copyright"
 
 # Debian policy wants a changelog in every binary package, and lintian makes
 # its absence an error rather than a warning: somebody installing from an apt
@@ -141,20 +141,20 @@ install -m 0644 "${root}/LICENSE" "${stage}/usr/share/doc/filebase/copyright"
 # what lintian's `package-contains-timestamped-gzip` is about, and it is also
 # what makes two builds of the same source produce the same bytes.
 gzip -9nc "${here}/changelog" \
-    > "${stage}/usr/share/doc/filebase/changelog.gz"
-chmod 0644 "${stage}/usr/share/doc/filebase/changelog.gz"
+    > "${stage}/usr/share/doc/slipcase-query/changelog.gz"
+chmod 0644 "${stage}/usr/share/doc/slipcase-query/changelog.gz"
 
-# `filebase` reads one optional positional argument and has no
+# `slipcase-query` reads one optional positional argument and has no
 # `--help`, so this page is the only place that argument is written down.
 # `@VERSION@` is substituted the same way `control.in`'s is, so the version in
 # the page header cannot drift from the version of the package carrying it.
-sed "s/@VERSION@/${version}/" "${here}/filebase.1.in" \
-    | gzip -9nc > "${stage}/usr/share/man/man1/filebase.1.gz"
-chmod 0644 "${stage}/usr/share/man/man1/filebase.1.gz"
+sed "s/@VERSION@/${version}/" "${here}/slipcase-query.1.in" \
+    | gzip -9nc > "${stage}/usr/share/man/man1/slipcase-query.1.gz"
+chmod 0644 "${stage}/usr/share/man/man1/slipcase-query.1.gz"
 
 # Stripped here rather than by the build profile, so a developer's release
 # binary keeps its symbols and only the packaged copy loses them.
-strip --strip-unneeded "${stage}/usr/bin/filebase" 2>/dev/null || true
+strip --strip-unneeded "${stage}/usr/bin/slipcase-query" 2>/dev/null || true
 
 # The umask of whoever ran this is not a packaging decision. `install -m`
 # already fixed every file; this fixes the directories they sit in, so the

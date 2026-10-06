@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <!--
-    Filebase, with the corner already rounded.
+    Slipcase Query, with the corner already rounded.
 
     Author: David M. Anderson
     Built with AI assistance (Claude, Anthropic)
 
-    The same drawing as `filebase-square.svg`, which is the source of record:
+    The same drawing as `slipcase-query-square.svg`, which is the source of record:
     change that one and bring the change here. The two exist because the
     places an icon goes do not agree about whose job the corner is. A store
     masks what it is handed and wants the square, so a drawing that arrived

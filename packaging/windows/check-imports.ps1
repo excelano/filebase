@@ -27,7 +27,7 @@
     is a check that cannot run where the toolchain is absent.
 
 .PARAMETER Binary
-    The executable to read. Defaults to the release build of filebase.
+    The executable to read. Defaults to the release build of slipcase-query.
 #>
 [CmdletBinding()]
 param(
@@ -51,7 +51,7 @@ function Refuse([string] $why) {
 # assuming: this application renders through wgpu where that one renders through
 # glow, and the expectation was that Direct3D would add names here. It does not.
 # **The list below is segler's measurement, not this application's.** It is the
-# starting set, and the first run of this script against a real `filebase.exe`
+# starting set, and the first run of this script against a real `slipcase-query.exe`
 # is what replaces it with what this binary actually imports. Treat a failure
 # on the first run as a list to correct rather than as a defect found.
 # 2026-09-04 against the release binary, and the two lists are the same because
@@ -79,11 +79,11 @@ $InBoxPrefixes = @('api-ms-win-', 'ext-ms-win-')
 
 if (-not $Binary) {
     $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-    $Binary = Join-Path $here '..\..\target\release\filebase.exe'
+    $Binary = Join-Path $here '..\..\target\release\slipcase-query.exe'
     # `[build] target-dir` moves the target directory and no environment
     # variable then says so, which is why the packaging scripts ask cargo.
     $meta = cargo metadata --format-version 1 --no-deps 2>$null | ConvertFrom-Json
-    if ($meta) { $Binary = Join-Path $meta.target_directory 'release\filebase.exe' }
+    if ($meta) { $Binary = Join-Path $meta.target_directory 'release\slipcase-query.exe' }
 }
 
 if (-not (Test-Path $Binary)) { Refuse "no binary at $Binary - run 'cargo build --release' first" }
@@ -171,7 +171,7 @@ if ($unknown.Count -gt 0) {
     foreach ($dll in $unknown) { Write-Host "  UNKNOWN  $dll" -ForegroundColor Red }
     Write-Host ''
     Write-Host 'A DLL that is not part of Windows has to be on the machine before' -ForegroundColor Yellow
-    Write-Host 'Filebase will start, and a Store tester will have a clean machine.' -ForegroundColor Yellow
+    Write-Host 'Slipcase Query will start, and a Store tester will have a clean machine.' -ForegroundColor Yellow
     Write-Host 'If it is genuinely in-box, add it to $InBox above and say how that' -ForegroundColor Yellow
     Write-Host 'was confirmed. If it is not, remove the dependency.' -ForegroundColor Yellow
     exit 1

@@ -23,8 +23,8 @@ to ask. Nothing else parses that file.
 
 ## The icon
 
-`icons/filebase-square.svg` is the source of record and carries the reasoning.
-`icons/filebase-rounded.svg` is the same drawing with the corner already on it;
+`icons/slipcase-query-square.svg` is the source of record and carries the reasoning.
+`icons/slipcase-query-rounded.svg` is the same drawing with the corner already on it;
 both are committed rather than one being derived, because a corner is a drawing
 decision and not a regex over somebody else's markup.
 
@@ -35,7 +35,7 @@ rounded one.
 
     cargo run --manifest-path packaging/make-icons/Cargo.toml
 
-writes `filebase.ico`, `filebase.icns` and the listing squares into `icons/`.
+writes `slipcase-query.ico`, `slipcase-query.icns` and the listing squares into `icons/`.
 It is pure Rust and needs no Mac: the `.icns` is built here rather than with
 `sips` and `iconutil`. The rasters are committed, which is why a repository
 that otherwise holds only sources has PNGs in it.
@@ -43,7 +43,7 @@ that otherwise holds only sources has PNGs in it.
 **One drawing.** The fleet's rule is that an application opening two kinds of
 file draws three icons, because a file type draws its own icon by its own
 mechanism and pointing both types at the application's drawing puts one picture
-on both. Filebase opens a folder and registers no file type, so there is
+on both. Slipcase Query opens a folder and registers no file type, so there is
 nothing to draw but the application.
 
 ## What this package does not carry
@@ -51,7 +51,7 @@ nothing to draw but the application.
 **No media type, and no dependency on another Slipcase package.** Slipcase
 Desktop and Slipcase Open open a document, so they associate themselves with
 `.slpc` and depend on `slipcase-common`, which declares the type once for every
-product that reads it. Filebase is handed a directory. Its desktop entry
+product that reads it. Slipcase Query is handed a directory. Its desktop entry
 declares `inode/directory`, which is what puts it in a file manager's *Open
 With* for a folder and is the only reason the binary takes a positional
 argument at all.
@@ -70,7 +70,7 @@ makes the hand-written list honest: it runs the binary under each display
 backend, reads `/proc/PID/maps`, and reports any object that is not reachable
 from a package named in `Depends`.
 
-It needs a folder to bind to and nothing in it, because Filebase opens a window
+It needs a folder to bind to and nothing in it, because Slipcase Query opens a window
 against whatever it is pointed at. The applications that open a *document* need
 a conformant fixture at this point, since a refusal takes a different path and
 may not reach the graphics driver; a folder has no such distinction.

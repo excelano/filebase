@@ -12,7 +12,7 @@
 # Built with AI assistance (Claude, Anthropic)
 @{
     # Package/Identity/Name
-    Name = 'Excelano.Filebase'
+    Name = 'Excelano.SlipcaseQuery'
 
     # Package/Properties/PublisherDisplayName
     PublisherDisplayName = 'Excelano'
@@ -21,8 +21,8 @@
     # install and what an AUMID is built from, the store id is what the
     # listing URL is built from.
     #
-    #   Get-AppxPackage Excelano.Filebase
-    #   https://apps.microsoft.com/detail/9MTWVM90FBK3
-    PackageFamilyName = 'Excelano.Filebase_nbxmgv0sk86m4'
-    StoreId = '9MTWVM90FBK3'
+    #   Get-AppxPackage Excelano.SlipcaseQuery
+    #   https://apps.microsoft.com/detail/<StoreId>
+    PackageFamilyName = 'Excelano.SlipcaseQuery_nbxmgv0sk86m4'
+    StoreId = ''
 }

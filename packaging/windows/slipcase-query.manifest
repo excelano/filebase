@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--
-  The Win32 application manifest embedded in filebase.exe, and the only thing
+  The Win32 application manifest embedded in slipcase-query.exe, and the only thing
   in it is the DPI declaration.
 
   WHY IT EXISTS

@@ -1,6 +1,6 @@
-# German catalogue for Filebase.
+# German catalogue for Slipcase Query.
 # Copyright (C) 2026 Excelano LLC
-# This file is distributed under the same licence as the filebase package.
+# This file is distributed under the same licence as the slipcase-query package.
 #
 # The Slipcase vocabulary follows slipcase-desktop's German so that a person
 # who uses both reads one set of words: a content file is an Inhaltsdatei, a
@@ -10,8 +10,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: filebase\n"
-"Report-Msgid-Bugs-To: https://github.com/excelano/filebase/issues\n"
+"Project-Id-Version: slipcase-query\n"
+"Report-Msgid-Bugs-To: https://github.com/excelano/slipcase-query/issues\n"
 "POT-Creation-Date: 2026-09-22 14:07-0500\n"
 "PO-Revision-Date: 2026-09-21 11:00+0000\n"
 "Last-Translator: David M. Anderson\n"

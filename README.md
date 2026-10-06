@@ -1,4 +1,4 @@
-# Filebase
+# Slipcase Query
 
 A desktop window over a directory of [Slipcase](https://slipcaseformat.org) containers. Point it at a folder, ask a question in [SlipQL](https://github.com/excelano/slipql), and the containers that answer come back as rows — one row per container, one column per flyleaf key. Select a row and the container's content file and its full flyleaf are beside it; press Open and the content file goes to whatever the system opens that kind of file with.
 
@@ -8,11 +8,11 @@ It reads. It never writes a container, and there is no Save in it: [Slipcase Des
 
 A container carries a TOML document describing its content file, and that description travels with the file. Once a folder holds a few hundred of them, the question stops being *what is in this file* and becomes *which of these files say this* — and a file manager cannot answer it, because to a file manager they are all ZIP archives with the same icon.
 
-Unpacking every container to find out, or keeping an index that goes stale the moment somebody copies a file in, both defeat the point of a flyleaf that lives with the document. Filebase keeps no index and no state: every query is a fresh scan, so the answer is what is on disk now, and the flyleaf is read in place without unpacking a content file.
+Unpacking every container to find out, or keeping an index that goes stale the moment somebody copies a file in, both defeat the point of a flyleaf that lives with the document. Slipcase Query keeps no index and no state: every query is a fresh scan, so the answer is what is on disk now, and the flyleaf is read in place without unpacking a content file.
 
 ## The query
 
-The language is SlipQL, and Filebase embeds the same crate the `slipql` command runs, rather than reimplementing it — which is why the language was written first. Its `GRAMMAR.md` is the reference, and the short version is that clauses come from SQL and literals come from TOML:
+The language is SlipQL, and Slipcase Query embeds the same crate the `slipql` command runs, rather than reimplementing it — which is why the language was written first. Its `GRAMMAR.md` is the reference, and the short version is that clauses come from SQL and literals come from TOML:
 
 ```text
 select @path, title, governance.owner where status = "draft" or tags contains "legal"

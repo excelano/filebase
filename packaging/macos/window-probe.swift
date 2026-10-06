@@ -28,7 +28,7 @@
 import CoreGraphics
 import Foundation
 
-let wanted = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "Filebase"
+let wanted = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "Slipcase Query"
 
 guard
     let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID)

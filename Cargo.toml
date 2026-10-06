@@ -1,5 +1,5 @@
 [package]
-name = "filebase"
+name = "slipcase-query"
 description = "Query a directory of Slipcase containers by their flyleaf and look at what comes back"
 homepage = "https://slipcaseformat.org"
 readme = "README.md"
@@ -9,14 +9,14 @@ version = "0.2.2"
 edition = "2021"
 authors = ["David M. Anderson"]
 license = "MIT"
-repository = "https://github.com/excelano/filebase"
+repository = "https://github.com/excelano/slipcase-query"
 # eframe's number, not this code's: nothing written here needs past edition
 # 2021's 1.56, and every other crate in the tree sits below eframe. It rises
 # whenever egui raises its own, so measure rather than trust this line.
 rust-version = "1.95"
 
 [[bin]]
-name = "filebase"
+name = "slipcase-query"
 path = "src/main.rs"
 
 [dependencies]

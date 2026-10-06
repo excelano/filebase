@@ -1,11 +1,11 @@
-.TH FILEBASE 1 "September 2026" "filebase @VERSION@" "User Commands"
+.TH SLIPCASE-QUERY 1 "September 2026" "slipcase-query @VERSION@" "User Commands"
 .SH NAME
-filebase \- query a folder of Slipcase containers by their flyleaf
+slipcase-query \- query a folder of Slipcase containers by their flyleaf
 .SH SYNOPSIS
-.B filebase
+.B slipcase-query
 .RI [ DIRECTORY ]
 .SH DESCRIPTION
-.B Filebase
+.B Slipcase Query
 opens a window over a folder of
 .B .slpc
 containers. It binds the folder, runs a SlipQL query over the flyleaf of the
@@ -19,7 +19,7 @@ keeps no index and no state, so every query is a fresh scan and the answer is
 what is on disk now. It never writes a container.
 .SH OPTIONS
 There are none.
-.B Filebase
+.B Slipcase Query
 is a window, not a command-line interface;
 .BR slipql (1)
 is that, over the same query engine.
@@ -56,11 +56,11 @@ the query, because flyleaf keys are ad hoc by design. A file that cannot be
 read is skipped and reported under the rows, and so is a comparison that
 crossed types.
 .SH EXIT STATUS
-.B Filebase
+.B Slipcase Query
 exits 0 when the window closes.
 .SH FILES
 .TP
-.I ~/.local/share/applications/filebase.desktop
+.I ~/.local/share/applications/slipcase-query.desktop
 The desktop entry, where it was installed for one account rather than from a
 package.
 .SH SEE ALSO

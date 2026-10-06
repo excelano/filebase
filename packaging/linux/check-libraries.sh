@@ -74,7 +74,7 @@ esac
 if [ -z "$binary" ]; then
     target_dir=$(cd "$root" && cargo metadata --format-version 1 --no-deps |
         sed -n 's/.*"target_directory":"\([^"]*\)".*/\1/p')
-    binary="${target_dir}/release/filebase"
+    binary="${target_dir}/release/slipcase-query"
 fi
 [ -x "$binary" ] || {
     echo "check-libraries.sh: no executable at $binary — cargo build --release first" >&2
@@ -95,7 +95,7 @@ stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT INT TERM
 
 # The application needs a folder to bind to, and the temporary directory above
-# is one. It needs nothing in it: Filebase opens a window, runs its first query
+# is one. It needs nothing in it: Slipcase Query opens a window, runs its first query
 # against whatever is there and draws the empty result, which is the whole path
 # through the display stack this script measures. The applications that open a
 # *document* need a conformant fixture here, because a refusal takes a different

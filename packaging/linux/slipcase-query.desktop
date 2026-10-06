@@ -1,13 +1,13 @@
 [Desktop Entry]
 Type=Application
-Name=Filebase
+Name=Slipcase Query
 GenericName=Container query browser
 Comment=Ask a folder of Slipcase containers a question and see what answered
-Exec=filebase %f
-Icon=filebase
+Exec=slipcase-query %f
+Icon=slipcase-query
 Terminal=false
 Categories=Utility;FileTools;
 Keywords=slipcase;slpc;container;flyleaf;query;slipql;search;
 StartupNotify=true
-StartupWMClass=filebase
+StartupWMClass=slipcase-query
 MimeType=inode/directory;

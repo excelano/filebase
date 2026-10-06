@@ -9,12 +9,12 @@
 # **There is no media type here, and that is the difference from the rest of
 # the family.** Slipcase Desktop and Slipcase Open open a document, so they
 # associate themselves with `.slpc` and depend on `slipcase-common` to declare
-# the type once for every product that reads it. Filebase opens a *folder*: it
+# the type once for every product that reads it. Slipcase Query opens a *folder*: it
 # is handed a directory and asks it a question, and there is no file extension
 # in that. So nothing here declares a type, nothing registers a handler, and
 # this package depends on no other.
 #
-# The entry does declare `inode/directory`, which is what puts Filebase in a
+# The entry does declare `inode/directory`, which is what puts Slipcase Query in a
 # file manager's "Open With" for a folder. That is the same path the binary's
 # one positional argument serves, and it is the only reason the argument
 # exists.
@@ -44,9 +44,9 @@ case "${1:-}" in
 esac
 
 install -d "${prefix}/applications" "${prefix}/icons/hicolor/scalable/apps"
-install -m 0644 "${here}/filebase.desktop" "${prefix}/applications/filebase.desktop"
-install -m 0644 "${here}/icons/filebase.svg" \
-    "${prefix}/icons/hicolor/scalable/apps/filebase.svg"
+install -m 0644 "${here}/slipcase-query.desktop" "${prefix}/applications/slipcase-query.desktop"
+install -m 0644 "${here}/icons/slipcase-query.svg" \
+    "${prefix}/icons/hicolor/scalable/apps/slipcase-query.svg"
 
 # Both caches, and neither failure is fatal: a desktop that has no such tool
 # rebuilds its own on a schedule, and a machine without them is not a machine
@@ -54,10 +54,10 @@ install -m 0644 "${here}/icons/filebase.svg" \
 update-desktop-database "${prefix}/applications" 2>/dev/null || true
 gtk-update-icon-cache -f -t "${prefix}/icons/hicolor" 2>/dev/null || true
 
-echo "installed the Filebase desktop entry and application icon under ${prefix}"
+echo "installed the Slipcase Query desktop entry and application icon under ${prefix}"
 echo
 echo "The entry runs whatever is on PATH. For a build from this checkout:"
 echo "  cargo build --release && cp \"\$(cargo metadata --format-version 1 --no-deps \\"
-echo "    | sed -n 's/.*\"target_directory\":\"\\([^\"]*\\)\".*/\\1/p')/release/filebase\" ~/.local/bin/"
+echo "    | sed -n 's/.*\"target_directory\":\"\\([^\"]*\\)\".*/\\1/p')/release/slipcase-query\" ~/.local/bin/"
 echo
-echo "Then, in a file manager, a folder's Open With should offer Filebase."
+echo "Then, in a file manager, a folder's Open With should offer Slipcase Query."

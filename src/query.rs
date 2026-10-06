@@ -136,7 +136,7 @@ impl Run {
         // at its next row rather than reading the rest of the tree for an
         // answer nobody will see.
         std::thread::Builder::new()
-            .name("filebase-query".to_owned())
+            .name("slipcase-query scan".to_owned())
             .spawn(move || {
                 let mut batch = Vec::with_capacity(BATCH);
                 let mut last_flush = Instant::now();

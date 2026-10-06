@@ -1060,22 +1060,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b97b65636e5b9ef369943878ac74335ba1c55c1cb6adbf1e2c293c624248d693"
 
 [[package]]
-name = "filebase"
-version = "0.2.2"
-dependencies = [
- "eframe",
- "flyleaf",
- "ico",
- "opener",
- "potext",
- "rfd",
- "slipql",
- "slpc",
- "tempfile",
- "zbus",
-]
-
-[[package]]
 name = "find-msvc-tools"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2914,6 +2898,22 @@ name = "slab"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+
+[[package]]
+name = "slipcase-query"
+version = "0.2.2"
+dependencies = [
+ "eframe",
+ "flyleaf",
+ "ico",
+ "opener",
+ "potext",
+ "rfd",
+ "slipql",
+ "slpc",
+ "tempfile",
+ "zbus",
+]
 
 [[package]]
 name = "slipql"

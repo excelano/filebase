@@ -48,10 +48,10 @@
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>Filebase</DisplayName>
+    <DisplayName>Slipcase Query</DisplayName>
     <PublisherDisplayName>@PUBLISHER_DISPLAY_NAME@</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
-    <Description>Point Filebase at a folder of Slipcase containers and ask which of them say what you are looking for. One row per container, one column per flyleaf key. It never writes a container and makes no network connection.</Description>
+    <Description>Point Slipcase Query at a folder of Slipcase containers and ask which of them say what you are looking for. One row per container, one column per flyleaf key. It never writes a container and makes no network connection.</Description>
   </Properties>
 
   <Dependencies>
@@ -85,12 +85,12 @@
 
   <Applications>
     <Application
-      Id="Filebase"
-      Executable="filebase.exe"
+      Id="SlipcaseQuery"
+      Executable="slipcase-query.exe"
       EntryPoint="Windows.FullTrustApplication">
 
       <uap:VisualElements
-        DisplayName="Filebase"
+        DisplayName="Slipcase Query"
         Description="Ask a folder of Slipcase containers a question and read the answer as rows."
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
@@ -100,7 +100,7 @@
 
       <!-- **No Extensions, where every sibling declares file associations here.**
            Slipcase Desktop claims `.slpc`, Segler claims `.dclx` and `.dclg`.
-           Filebase opens a *folder*, and there is no extension in that: the
+           Slipcase Query opens a *folder*, and there is no extension in that: the
            Windows shell has no notion of an application that handles a
            directory the way a Linux desktop entry does with
            `inode/directory`, so there is nothing to declare and nothing for a

@@ -15,7 +15,7 @@
 
 [package]
 name = "make-icons"
-description = "Rasterize the Filebase icon SVG into the icons and store assets three platforms want"
+description = "Rasterize the Slipcase Query icon SVG into the icons and store assets three platforms want"
 version = "0.1.0"
 edition = "2021"
 authors = ["David M. Anderson"]

@@ -3,7 +3,7 @@
 # every platform.
 #
 # The sibling applications open one document, so each carries a
-# `demo-container.sh` that writes one file. Filebase opens a *folder*, and a
+# `demo-container.sh` that writes one file. Slipcase Query opens a *folder*, and a
 # folder of one container is a screenshot of an empty product — so this writes
 # a small tree instead: containers at three depths, with descriptions that
 # differ from one another in the ways a query has to survive.

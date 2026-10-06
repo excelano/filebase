@@ -1,4 +1,4 @@
-Package: filebase
+Package: slipcase-query
 Version: @VERSION@
 Architecture: @ARCH@
 Maintainer: David M. Anderson <david.anderson@excelano.com>
@@ -8,7 +8,7 @@ Priority: optional
 Homepage: https://slipcaseformat.org
 Depends: libc6, libgcc-s1, libwayland-client0, libxkbcommon0, libxkbcommon-x11-0, libegl1, libvulkan1 | libgl1, libx11-6, libx11-xcb1, libxi6, libxcursor1, libxrandr2, desktop-file-utils, hicolor-icon-theme
 Description: Query a folder of Slipcase containers by their flyleaf
- Point Filebase at a folder of .slpc containers and ask a question in SlipQL:
+ Point Slipcase Query at a folder of .slpc containers and ask a question in SlipQL:
  each container is a row and each flyleaf key a column. Select a row and the
  container's content file and its full flyleaf sit beside the table; one press
  hands the content file to whatever the system opens that kind of file with.
@@ -25,7 +25,7 @@ Description: Query a folder of Slipcase containers by their flyleaf
  This package depends on no other Slipcase product, which is the difference
  from Slipcase Desktop and Slipcase Open. Those open a document, so they
  associate themselves with the .slpc media type and need slipcase-common to
- declare it. Filebase is handed a folder and declares no file type at all.
+ declare it. Slipcase Query is handed a folder and declares no file type at all.
  .
  Only two of the libraries above are found by dpkg-shlibdeps. The executable
  links libc and libgcc and nothing else; the display stack, the graphics

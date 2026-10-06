@@ -1,4 +1,4 @@
-//! Filebase: a query over a directory of Slipcase containers, and what came back.
+//! Slipcase Query: a query over a directory of Slipcase containers, and what came back.
 //
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
@@ -30,10 +30,10 @@ use std::sync::mpsc;
 
 use eframe::egui;
 
-use filebase::detail::Outcome;
-use filebase::i18n::{fill, t};
-use filebase::query::{self, Run, Update};
-use filebase::{Detail, ReadOnly};
+use slipcase_query::detail::Outcome;
+use slipcase_query::i18n::{fill, t};
+use slipcase_query::query::{self, Run, Update};
+use slipcase_query::{Detail, ReadOnly};
 
 /// Every language this application is translated into.
 ///
@@ -54,7 +54,7 @@ const CATALOGUES: &[(&str, &str)] = &[
 /// A Wayland compositor matches this against the basename of the `.desktop`
 /// entry to find the window's icon and its name, so the two have to agree. The
 /// packaging installs that entry; this is the half that lives in the binary.
-const APP_ID: &str = "filebase";
+const APP_ID: &str = "slipcase-query";
 
 /// The window's icon on Windows, which has no `.desktop` entry to find one in.
 ///
@@ -62,7 +62,7 @@ const APP_ID: &str = "filebase";
 /// `with_app_id` is Wayland's `xdg_toplevel.set_app_id` and neither egui,
 /// eframe nor winit turns it into anything on Windows.
 #[cfg(target_os = "windows")]
-const WINDOW_ICON: &[u8] = include_bytes!("../packaging/windows/filebase.ico");
+const WINDOW_ICON: &[u8] = include_bytes!("../packaging/windows/slipcase-query.ico");
 
 /// The icon at the largest size the drawing carries without being upscaled.
 ///
@@ -108,7 +108,7 @@ fn main() -> eframe::Result {
     // language with no catalogue is a window in English, which is the fallback
     // either way.
     if let Some(language) = potext::preferred() {
-        let _ = filebase::i18n::set_language(&language, CATALOGUES);
+        let _ = slipcase_query::i18n::set_language(&language, CATALOGUES);
         let _ = flyleaf::set_language(&language);
     }
 
@@ -159,10 +159,10 @@ fn main() -> eframe::Result {
         ..Default::default()
     };
 
-    // "Filebase" rather than the crate name: the product name goes in front of
-    // a person and `filebase` stays on disk and on PATH.
+    // "Slipcase Query" rather than the crate name: the product name goes in front of
+    // a person and `slipcase-query` stays on disk and on PATH.
     eframe::run_native(
-        "Filebase",
+        "Slipcase Query",
         options,
         Box::new(move |cc| {
             // Where the toolkit will not say whether the desktop is light or
@@ -307,7 +307,7 @@ impl App {
         let (sender, answer) = mpsc::channel();
         let start = self.folder.clone();
         std::thread::Builder::new()
-            .name("filebase-dialog".to_owned())
+            .name("slipcase-query dialog".to_owned())
             .spawn(move || {
                 let mut dialog = rfd::FileDialog::new().set_title(t("Choose a folder"));
                 if let Some(start) = start {
@@ -370,7 +370,7 @@ impl App {
 /// A directory of this process's own, readable by nobody else.
 fn new_scratch() -> std::io::Result<tempfile::TempDir> {
     let mut builder = tempfile::Builder::new();
-    builder.prefix("filebase-");
+    builder.prefix("slipcase-query-");
     // Asked for rather than taken: `Builder::tempdir` goes through the umask,
     // which leaves 0755 under the common one and 0775 under Debian's. Not a
     // question on Windows, where a directory under the user's own temporary
@@ -600,7 +600,7 @@ impl App {
         ui.strong(detail.relative.clone());
         ui.add_space(8.0);
 
-        let can_open = detail.content().is_some_and(filebase::detail::ContentFile::can_be_opened);
+        let can_open = detail.content().is_some_and(slipcase_query::detail::ContentFile::can_be_opened);
         match &detail.outcome {
             Outcome::Unreadable(why) => {
                 ui.colored_label(ui.visuals().error_fg_color, why);
@@ -668,19 +668,19 @@ mod tests {
     /// mis-encoded or truncated `.po` takes, which `msgfmt --check` cannot see
     /// because it reads the file rather than what the program makes of it.
     ///
-    /// The lookup goes through `filebase::i18n`, which is the crate-wide
+    /// The lookup goes through `slipcase_query::i18n`, which is the crate-wide
     /// catalogue every sentence in the window is drawn from, so this is the
     /// same path a person running the application in German takes.
     #[test]
     fn the_german_catalogue_answers() {
         assert_eq!(
-            filebase::i18n::set_language("de", CATALOGUES).as_deref(),
+            slipcase_query::i18n::set_language("de", CATALOGUES).as_deref(),
             Some("de")
         );
-        assert_eq!(filebase::i18n::t("Content file"), "Inhaltsdatei");
-        assert_eq!(filebase::i18n::t("Open content file"), "Inhaltsdatei öffnen");
+        assert_eq!(slipcase_query::i18n::t("Content file"), "Inhaltsdatei");
+        assert_eq!(slipcase_query::i18n::t("Open content file"), "Inhaltsdatei öffnen");
         // A message with a placeholder: the braces have to survive the
         // translation, because `fill` looks them up by name afterwards.
-        assert!(filebase::i18n::t("{path} is not a folder.").contains("{path}"));
+        assert!(slipcase_query::i18n::t("{path} is not a folder.").contains("{path}"));
     }
 }

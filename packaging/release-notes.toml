@@ -12,10 +12,10 @@
 # Nothing else reads this. The GitHub release, the Debian changelog and the
 # AppStream entry take commit subjects.
 
-version = "0.2.2"
+version = "0.3.0"
 
 [locales]
 [locales.de-de]
-whats-new = "Schlägt Inhaltsdatei öffnen mittendrin fehl, bleibt keine unvollständige Datei mehr zurück: Die Datei wird ganz oder gar nicht geschrieben, und ein erneutes Öffnen ersetzt sie, statt eine Datei umzuschreiben, die ein anderes Programm noch geöffnet hat."
+whats-new = "Aus Filebase wird Slipcase Query, damit die drei Slipcase-Desktopanwendungen als eine Familie lesbar sind: Slipcase Desktop bearbeitet einen Container, Slipcase Open öffnet einen, Slipcase Query stellt einem Ordner voller Container eine Frage. Sonst hat sich nichts geändert."
 [locales.en-us]
-whats-new = "If Open content file fails partway, no half-written file is left behind: the file is written whole or not at all, and opening it again replaces it instead of rewriting a file another program may still have open."
+whats-new = "Filebase is now Slipcase Query, so that the three Slipcase desktop applications read as one family: Slipcase Desktop edits a container, Slipcase Open opens one, Slipcase Query asks a folder of them a question. Nothing else changed."

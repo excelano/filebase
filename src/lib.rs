@@ -1,4 +1,4 @@
-//! Filebase: a window over a directory of Slipcase containers.
+//! Slipcase Query: a window over a directory of Slipcase containers.
 //!
 //! Everything here is what the window needs to know and none of it draws.
 //! [`query`] runs a query on a thread of its own and streams rows back,

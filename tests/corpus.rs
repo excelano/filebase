@@ -17,9 +17,9 @@
 
 use std::path::{Path, PathBuf};
 
-use filebase::detail::Outcome;
-use filebase::query::{Run, Update};
-use filebase::Detail;
+use slipcase_query::detail::Outcome;
+use slipcase_query::query::{Run, Update};
+use slipcase_query::Detail;
 
 /// Pack one container under `dir`, with `flyleaf` as its TOML.
 fn pack(dir: &Path, name: &str, flyleaf: &str) {
@@ -121,7 +121,7 @@ fn run_to_end(folder: &Path, recursive: bool, text: &str) -> Run {
 fn cells(run: &Run, column: &str) -> Vec<String> {
     run.rows()
         .iter()
-        .map(|row| filebase::query::cell(row, column))
+        .map(|row| slipcase_query::query::cell(row, column))
         .collect()
 }
 

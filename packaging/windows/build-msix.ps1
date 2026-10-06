@@ -281,7 +281,7 @@ if (-not $Binary) {
         } finally { Pop-Location }
     }
     if (-not $targetDir) { $targetDir = Join-Path $root 'target' }
-    $Binary = Join-Path $targetDir 'release\filebase.exe'
+    $Binary = Join-Path $targetDir 'release\slipcase-query.exe'
 }
 if (-not (Test-Path $Binary)) {
     Refuse "no executable at $Binary - run 'cargo build --release' first"
@@ -348,14 +348,14 @@ $stage = Join-Path $OutDir 'msix-stage'
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 New-Item -ItemType Directory -Path (Join-Path $stage 'Assets') -Force | Out-Null
 
-Copy-Item $Binary (Join-Path $stage 'filebase.exe')
+Copy-Item $Binary (Join-Path $stage 'slipcase-query.exe')
 
-# Only the window. The `filebase` command-line tool is in the same workspace and
-# in the same Debian package, and it is deliberately not in this one: a packaged
+# Only the window. The command line over the same engine is `slipql`, its own
+# crate and its own package, and nothing else goes in this one: a packaged
 # application's executables live under `WindowsApps` behind an app-execution
 # alias, declaring one is a manifest extension nobody has asked for, and a
 # command-line tool a person cannot type the name of is worse than one they
-# install another way. The CLI ships through cargo-dist.
+# install another way.
 $assets = Join-Path $here 'assets'
 Copy-Item (Join-Path $assets '*.png') (Join-Path $stage 'Assets')
 # The whole directory is copied and then the six the manifest names are
@@ -457,7 +457,7 @@ if ($split) {
 
 # --- the package ------------------------------------------------------------
 
-$package = Join-Path $OutDir "Filebase-$version-x64.msix"
+$package = Join-Path $OutDir "SlipcaseQuery-$version-x64.msix"
 & $makeappx pack /d $stage /p $package /o
 if ($LASTEXITCODE -ne 0) { Refuse "makeappx pack failed ($LASTEXITCODE)" }
 
@@ -486,7 +486,7 @@ if ($SelfSign) {
     # subject differ, so the subject is built from the identity rather than
     # typed a second time.
     #
-    # Filebase's Publisher is the Excelano account's and is the same X.500 string
+    # Slipcase Query's Publisher is the Excelano account's and is the same X.500 string
     # slipcase-desktop's identity carries, so a certificate left in this store
     # by that application's test signing matches this one and is reused. That is
     # correct rather than a coincidence to guard against: the subject is what

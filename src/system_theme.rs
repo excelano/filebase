@@ -141,7 +141,7 @@ mod linux {
     pub fn watch(ctx: &eframe::egui::Context, mut apply: impl FnMut(Scheme) + Send + 'static) {
         let ctx = ctx.clone();
         std::thread::Builder::new()
-            .name("filebase-theme".to_owned())
+            .name("slipcase-query theme".to_owned())
             .spawn(move || {
                 let Ok(connection) = zbus::blocking::Connection::session() else {
                     return;

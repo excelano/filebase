@@ -8,8 +8,7 @@
 # The fields both stores take sit at the top of a language. The rest sit under
 # the store that takes them, because the two do not take the same fields and do
 # not count them the same way. The name is under each store because the two can
-# disagree about it — and here they do not: Apple accepted the bare word
-# Filebase, where it refused Slipcase.
+# disagree about it, as they do for Slipcase Desktop; here both say Slipcase Query.
 #
 # Limits, which ship checks before the tag and counts in characters rather than
 # bytes: apple.name and apple.subtitle 30, apple.promotional-text 170,
@@ -36,10 +35,10 @@
 # `store_locales` in ship.conf gains `de-de` when the store targets land.
 
 apple-review-notes = """
-Filebase reads Slipcase containers: ordinary ZIP files that hold one document plus a small TOML file describing it. It shows an empty table until it is given a folder that holds some, so please start with the sample below rather than with an arbitrary folder — an empty result is what this application correctly does with a folder that has no containers in it, and it looks like a failure.
+Slipcase Query reads Slipcase containers: ordinary ZIP files that hold one document plus a small TOML file describing it. It shows an empty table until it is given a folder that holds some, so please start with the sample below rather than with an arbitrary folder — an empty result is what this application correctly does with a folder that has no containers in it, and it looks like a failure.
 
 A folder to test with:
-https://excelano.com/filebase/filebase-sample-containers.zip
+https://excelano.com/slipcase-query/slipcase-query-sample-containers.zip
 
 Unpack it anywhere. It contains "Contracts", five containers three levels deep.
 
@@ -56,26 +55,26 @@ To see the application work:
 
 No account, no sign-in and no configuration are needed, and there is nothing to enter. The application makes no network connection of any kind, stores nothing on disk, and never writes a container — there is no Save in it.
 
-The query language is SlipQL, documented at https://excelano.com/filebase/ and specified with the format at https://slipcaseformat.org/spec/.
+The query language is SlipQL, documented at https://excelano.com/slipcase-query/ and specified with the format at https://slipcaseformat.org/spec/.
 """
 microsoft-review-notes = """
-Filebase is a desktop window over a folder of Slipcase containers, queried in SlipQL. It never writes a container - there is no Save - and no account, sign-in or network connection of any kind is needed to test it.
+Slipcase Query is a desktop window over a folder of Slipcase containers, queried in SlipQL. It never writes a container - there is no Save - and no account, sign-in or network connection of any kind is needed to test it.
 
-A folder of sample containers is at https://excelano.com/filebase/filebase-sample-containers.zip. Download it, unzip it, and point Filebase at the folder (the folder chooser, or name it on the command line). Type a query such as select * and press Run; the containers that answer come back as rows, one per container, one column per flyleaf key. Select a row and its content file's name, size and full flyleaf appear on the right; Open hands the content file to whatever the system opens that kind of file with.
+A folder of sample containers is at https://excelano.com/slipcase-query/slipcase-query-sample-containers.zip. Download it, unzip it, and point Slipcase Query at the folder (the folder chooser, or name it on the command line). Type a query such as select * and press Run; the containers that answer come back as rows, one per container, one column per flyleaf key. Select a row and its content file's name, size and full flyleaf appear on the right; Open hands the content file to whatever the system opens that kind of file with.
 
 The package declares runFullTrust and no other capability. It reads only the folder a person points it at, opens a content file through the shell's own registered handler, and writes nothing. It makes no network connection of any kind and keeps no index, so every query is a fresh scan of what is on disk.
 """
 
 [locales."en-us"]
-website = "https://excelano.com/filebase/"
-support = "https://excelano.com/filebase/#support"
-privacy = "https://excelano.com/legal/#filebase"
+website = "https://excelano.com/slipcase-query/"
+support = "https://excelano.com/slipcase-query/#support"
+privacy = "https://excelano.com/legal/#slipcase-query"
 description = """
 A Slipcase container is a file with its description attached: a document of any kind, packed with a small text file that says what it is. The description travels with the document, so it is still there after the file has been copied, renamed, mailed and filed.
 
 Once a folder holds a few hundred of them, the question stops being what is in this file and becomes which of these files say this. A file manager cannot answer that. To a file manager they are all archives with the same icon.
 
-Filebase answers it.
+Slipcase Query answers it.
 
 WHAT YOU DO
 
@@ -107,21 +106,21 @@ It makes no network connection of any kind. There is no server behind it, no acc
 
 OPEN SOURCE
 
-Written in Rust, free, and open source under the MIT licence, at github.com/excelano/filebase. The query engine is a separate crate anyone can build on, and the format is a published specification that any ZIP tool can read.
+Written in Rust, free, and open source under the MIT licence, at github.com/excelano/slipcase-query. The query engine is a separate crate anyone can build on, and the format is a published specification that any ZIP tool can read.
 """
 
 [locales."en-us".apple]
-name = "Filebase"
+name = "Slipcase Query"
 subtitle = "Query a folder of documents"
 promotional-text = "Point it at a folder of Slipcase containers, ask which of them say what you are looking for, and read the answer as rows."
 keywords = "Slipcase,slpc,flyleaf,query,search,documents,folder,container,SlipQL,TOML"
 
 [locales."en-us".microsoft]
-name = "Filebase"
+name = "Slipcase Query"
 short-description = """
 A Slipcase container is a file with its description attached, and the description travels with it. Once a folder holds a few hundred, the question is which of them say this, and a file manager cannot answer it.
 
-Point Filebase at the folder and ask. What answered comes back as rows, one per container, one column per key. Select a row to read its whole description, and hand the document to whatever opens it.
+Point Slipcase Query at the folder and ask. What answered comes back as rows, one per container, one column per key. Select a row to read its whole description, and hand the document to whatever opens it.
 
 It never writes a container, keeps no index, and makes no network connection.
 """
@@ -151,15 +150,15 @@ keywords = [
 ]
 
 [locales."de-de"]
-website = "https://excelano.com/filebase/"
-support = "https://excelano.com/filebase/#support"
-privacy = "https://excelano.com/legal/#filebase"
+website = "https://excelano.com/slipcase-query/"
+support = "https://excelano.com/slipcase-query/#support"
+privacy = "https://excelano.com/legal/#slipcase-query"
 description = """
 Ein Slipcase-Container ist eine Datei mit ihrer Beschreibung darin: ein Dokument beliebiger Art, gepackt mit einer kleinen Textdatei, die sagt, was es ist. Die Beschreibung reist mit dem Dokument und ist noch da, nachdem die Datei kopiert, umbenannt, verschickt und abgelegt wurde.
 
 Sobald ein Ordner ein paar Hundert davon enthält, lautet die Frage nicht mehr, was in dieser Datei steht, sondern welche dieser Dateien dies sagen. Ein Dateimanager kann das nicht beantworten. Für ihn sind es alles Archive mit demselben Symbol.
 
-Filebase beantwortet sie.
+Slipcase Query beantwortet sie.
 
 WAS SIE TUN
 
@@ -191,21 +190,21 @@ Es baut keinerlei Netzwerkverbindung auf. Kein Server dahinter, kein Konto anzul
 
 QUELLOFFEN
 
-In Rust geschrieben, kostenlos und quelloffen unter der MIT-Lizenz, auf github.com/excelano/filebase. Die Abfrage-Engine ist ein eigenes Crate, auf dem jeder aufbauen kann, und das Format ist eine veröffentlichte Spezifikation, die sich mit jedem ZIP-Werkzeug lesen lässt.
+In Rust geschrieben, kostenlos und quelloffen unter der MIT-Lizenz, auf github.com/excelano/slipcase-query. Die Abfrage-Engine ist ein eigenes Crate, auf dem jeder aufbauen kann, und das Format ist eine veröffentlichte Spezifikation, die sich mit jedem ZIP-Werkzeug lesen lässt.
 """
 
 [locales."de-de".apple]
-name = "Filebase"
+name = "Slipcase Query"
 subtitle = "Dokumentordner abfragen"
 promotional-text = "Auf einen Ordner voller Slipcase-Container zeigen, fragen, welche davon sagen, was Sie suchen, und die Antwort als Zeilen lesen."
 keywords = "Slipcase,slpc,Flyleaf,Abfrage,Suche,Dokumente,Ordner,Container,SlipQL,TOML"
 
 [locales."de-de".microsoft]
-name = "Filebase"
+name = "Slipcase Query"
 short-description = """
 Ein Slipcase-Container ist eine Datei mit ihrer Beschreibung darin, und die Beschreibung reist mit. Sobald ein Ordner ein paar Hundert enthält, lautet die Frage, welche davon dies sagen, und ein Dateimanager kann sie nicht beantworten.
 
-Zeigen Sie Filebase auf den Ordner und fragen Sie. Was antwortet, kommt als Zeilen zurück, eine je Container, eine Spalte je Schlüssel.
+Zeigen Sie Slipcase Query auf den Ordner und fragen Sie. Was antwortet, kommt als Zeilen zurück, eine je Container, eine Spalte je Schlüssel.
 
 Es schreibt nie einen Container, führt keinen Index und baut keine Netzwerkverbindung auf.
 """

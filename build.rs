@@ -3,7 +3,7 @@
 //! The rule this holds to is that nothing in this project compiles C and that a
 //! build needs a Rust toolchain and nothing else. This prints two linker
 //! arguments and the linker that was already linking the binary embeds
-//! `packaging/windows/filebase.manifest`. No resource compiler, no object file,
+//! `packaging/windows/slipcase-query.manifest`. No resource compiler, no object file,
 //! nothing compiled that was not compiled before.
 //!
 //! The distinction matters because the obvious way to do this is `rc.exe` or
@@ -28,7 +28,7 @@ fn main() {
     let manifest = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("packaging")
         .join("windows")
-        .join("filebase.manifest");
+        .join("slipcase-query.manifest");
 
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed={}", manifest.display());
@@ -51,6 +51,6 @@ fn main() {
         "/MANIFEST:EMBED",
         &format!("/MANIFESTINPUT:{}", manifest.display()),
     ] {
-        println!("cargo:rustc-link-arg-bin=filebase={arg}");
+        println!("cargo:rustc-link-arg-bin=slipcase-query={arg}");
     }
 }

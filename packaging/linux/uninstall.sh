@@ -2,7 +2,7 @@
 # Take back what install.sh put down.
 #
 # Two files and two cache refreshes. There is no media type to think about:
-# Filebase declares none, because it opens a folder rather than a document.
+# Slipcase Query declares none, because it opens a folder rather than a document.
 # See install.sh.
 #
 # Author: David M. Anderson
@@ -17,9 +17,9 @@ case "${1:-}" in
     *) echo "uninstall.sh: unknown argument $1" >&2; exit 2 ;;
 esac
 
-rm -f "${prefix}/applications/filebase.desktop"
-rm -f "${prefix}/icons/hicolor/scalable/apps/filebase.svg"
+rm -f "${prefix}/applications/slipcase-query.desktop"
+rm -f "${prefix}/icons/hicolor/scalable/apps/slipcase-query.svg"
 update-desktop-database "${prefix}/applications" 2>/dev/null || true
 gtk-update-icon-cache -f -t "${prefix}/icons/hicolor" 2>/dev/null || true
 
-echo "removed the Filebase desktop entry and icon from ${prefix}"
+echo "removed the Slipcase Query desktop entry and icon from ${prefix}"

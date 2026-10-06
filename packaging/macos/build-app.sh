@@ -12,7 +12,7 @@
 # It signs the bundle when it is given an identity, because the Mac App Store
 # is the chosen channel and an unsigned bundle is not a thing that can be
 # tested: the App Sandbox is inert until the entitlement is inside a signature,
-# so an unsigned bundle carrying `Filebase.entitlements` is not sandboxed and
+# so an unsigned bundle carrying `Slipcase Query.entitlements` is not sandboxed and
 # proves nothing. `README.md` beside this file says which certificate is which.
 #
 # This is slipcase-desktop's script with three icons where it has one and two
@@ -39,7 +39,7 @@ usage: build-app.sh [--binary PATH] [--outdir DIR] [--universal] [--sign ID]
                     [--store PROFILE]
 
   --binary PATH  the executable to bundle (default: the release build)
-  --outdir DIR   where to write Filebase.app (default: ./dist)
+  --outdir DIR   where to write Slipcase Query.app (default: ./dist)
   --sign ID      sign the finished bundle with this identity and the sandbox
                  entitlements beside this script. `security find-identity -v
                  -p codesigning` lists what this machine holds. An Apple
@@ -67,10 +67,10 @@ usage: build-app.sh [--binary PATH] [--outdir DIR] [--universal] [--sign ID]
                  attached to the release, so signing it here is a download and
                  this command, with no toolchain and nothing compiled:
 
-                   gh release download v0.1.0 -p filebase-universal
+                   gh release download v0.1.0 -p slipcase-query-universal
                    ./packaging/macos/build-app.sh \
-                       --binary ./filebase-universal \
-                       --store ~/Downloads/Filebase_Mac_App_Store.provisionprofile
+                       --binary ./slipcase-query-universal \
+                       --store ~/Downloads/Slipcase_Query_Mac_App_Store.provisionprofile
 
                  Building it here instead is --universal beside --store.
 USAGE
@@ -122,7 +122,7 @@ if [ -n "$store_profile" ]; then
 
     # The profile is a CMS-signed property list. Decoding it is also the check
     # that it is one.
-    store_plist=$(mktemp -t filebase-profile)
+    store_plist=$(mktemp -t slipcase-query-profile)
     security cms -D -i "$store_profile" > "$store_plist" 2>/dev/null || {
         echo "build-app.sh: ${store_profile} is not a provisioning profile this can read" >&2
         exit 1
@@ -174,20 +174,20 @@ target_dir=$(cd "$root" && cargo metadata --format-version 1 --no-deps |
 if [ "$universal" = yes ] && [ -z "$binary" ]; then
     slices=""
     for triple in x86_64-apple-darwin aarch64-apple-darwin; do
-        slice="${target_dir}/${triple}/release/filebase"
+        slice="${target_dir}/${triple}/release/slipcase-query"
         [ -x "$slice" ] || {
             echo "build-app.sh: no executable at $slice — run 'cargo build --release --target ${triple}' first" >&2
             exit 1
         }
         slices="${slices} ${slice}"
     done
-    binary="${target_dir}/release/filebase-universal"
+    binary="${target_dir}/release/slipcase-query-universal"
     # shellcheck disable=SC2086
     lipo -create ${slices} -output "$binary"
 fi
 
 if [ -z "$binary" ]; then
-    binary="${target_dir}/release/filebase"
+    binary="${target_dir}/release/slipcase-query"
 fi
 [ -x "$binary" ] || {
     echo "build-app.sh: no executable at $binary — run 'cargo build --release' first" >&2
@@ -302,7 +302,7 @@ private_symbols "$binary"
 version=$("${here}/../version.sh" --short)
 build=$("${here}/../version.sh" --build)
 
-app="${outdir}/Filebase.app"
+app="${outdir}/Slipcase Query.app"
 rm -rf "$app"
 mkdir -p "${app}/Contents/MacOS" "${app}/Contents/Resources"
 
@@ -317,10 +317,10 @@ mkdir -p "${app}/Contents/MacOS" "${app}/Contents/Resources"
 #
 # **One icon, where the document applications carry three.** A file type draws
 # its icon by its own mechanism, so an application opening two kinds of file
-# needs a drawing for each or one picture ends up on both. Filebase opens a
+# needs a drawing for each or one picture ends up on both. Slipcase Query opens a
 # folder and declares no file type, so there is nothing to draw but the
 # application.
-icns="${here}/../icons/filebase.icns"
+icns="${here}/../icons/slipcase-query.icns"
 [ -f "$icns" ] || {
     echo "build-app.sh: no icon at ${icns}; run 'cargo run --manifest-path packaging/make-icons/Cargo.toml'" >&2
     exit 1
@@ -332,7 +332,7 @@ magic=$(dd if="$icns" bs=1 count=4 2>/dev/null)
     echo "build-app.sh: ${icns} is not an icns file" >&2
     exit 1
 }
-install -m 0644 "$icns" "${app}/Contents/Resources/filebase.icns"
+install -m 0644 "$icns" "${app}/Contents/Resources/slipcase-query.icns"
 
 sed -e "s/@VERSION@/${version}/g" -e "s/@BUILD@/${build}/g" \
     "${here}/Info.plist.in" > "${app}/Contents/Info.plist"
@@ -340,7 +340,7 @@ sed -e "s/@VERSION@/${version}/g" -e "s/@BUILD@/${build}/g" \
 # that quietly does not associate. Parsed here so the failure is loud.
 plutil -lint "${app}/Contents/Info.plist" >/dev/null
 
-install -m 0755 "$binary" "${app}/Contents/MacOS/filebase"
+install -m 0755 "$binary" "${app}/Contents/MacOS/slipcase-query"
 
 # A released bundle's executable has to agree with the floor its property
 # list declares, and Cargo's default does not: measured on this tree's first
@@ -359,7 +359,7 @@ if [ "$universal" = yes ] || [ -n "$store_profile" ]; then
         # Two shapes: a modern build emits LC_BUILD_VERSION with `minos`, and
         # an old enough deployment target emits LC_VERSION_MIN_MACOSX with
         # `version`. Both are read, so this cannot pass by finding neither.
-        got=$(otool -arch "$arch" -l "${app}/Contents/MacOS/filebase" |
+        got=$(otool -arch "$arch" -l "${app}/Contents/MacOS/slipcase-query" |
             awk '/LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX/ {want=1; next}
                  want && ($1 == "minos" || $1 == "version") {print $2; exit}')
         [ "$got" = "$floor" ] || {
@@ -442,10 +442,10 @@ if [ -n "$store_profile" ]; then
     # `AppxManifest.xml` follows about declaring only `runFullTrust`.
     #
     # The file access is **read-only**, which is where this diverges from the
-    # rest of the family and has to stay in step with `Filebase.entitlements`
-    # beside this script. Filebase never writes a container, so read-write
+    # rest of the family and has to stay in step with `Slipcase Query.entitlements`
+    # beside this script. Slipcase Query never writes a container, so read-write
     # would be a capability the product does not have.
-    store_ents=$(mktemp -t filebase-entitlements)
+    store_ents=$(mktemp -t slipcase-query-entitlements)
     cat > "$store_ents" <<ENTITLEMENTS
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -512,7 +512,7 @@ ENTITLEMENTS
     # `productbuild` rather than `pkgbuild`: the first makes a distribution
     # package, which is what the upload takes, and the second makes a
     # component package, which it does not.
-    pkg="${outdir}/Filebase.pkg"
+    pkg="${outdir}/Slipcase Query.pkg"
     productbuild --component "$app" /Applications --sign "$pkg_identity" "$pkg" >/dev/null
     pkgutil --check-signature "$pkg" | sed -n '1,3p'
     echo "built ${pkg} signed with ${pkg_identity}"
@@ -549,7 +549,7 @@ fi
 if [ -n "$identity" ]; then
     codesign --force --timestamp=none \
         --sign "$identity" \
-        --entitlements "${here}/Filebase.entitlements" \
+        --entitlements "${here}/Slipcase Query.entitlements" \
         "$app"
     # A signature that did not carry the entitlements is the failure that
     # costs a day: the bundle launches, behaves exactly as an unsigned one
@@ -574,7 +574,7 @@ echo
 echo "run it against a folder of containers:"
 echo "  open -a ${app} --args /path/to/a/folder"
 echo
-echo "Filebase declares no document type, so there is nothing to register with"
+echo "Slipcase Query declares no document type, so there is nothing to register with"
 echo "Launch Services and nothing for a double-click to find. It is handed a"
 echo "folder as an argument, which is what the Store screenshot driver does"
 echo "through AS_ARGS in packaging/macos/shots.sh."

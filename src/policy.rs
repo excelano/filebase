@@ -18,7 +18,7 @@ use std::borrow::Cow;
 /// beneath it: the edit would go into the in-memory document, show as though it
 /// had taken, and vanish at the next selection. There is no path through this
 /// application that writes a container, and there is no `Save` — that is
-/// Slipcase Desktop's, and the day Filebase edits is the day it acquires the
+/// Slipcase Desktop's, and the day Slipcase Query edits is the day it acquires the
 /// sandbox save path and the undo stack with it.
 pub struct ReadOnly;
 

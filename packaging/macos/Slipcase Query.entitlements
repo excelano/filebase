@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  The App Store sandbox, and the one thing Filebase asks for inside it.
+  The App Store sandbox, and the one thing Slipcase Query asks for inside it.
 
   **Read-only, where the rest of the family asks for read-write.** Slipcase
   Desktop and Segler both save the document they opened, so both need
-  `user-selected.read-write`. Filebase never writes a container: there is no
+  `user-selected.read-write`. Slipcase Query never writes a container: there is no
   Save in it and no code path that rewrites one, which `src/policy.rs` is the
   statement of. Asking for write access it would never use would be asking for
   a capability the product does not have, and the entitlement list is the one

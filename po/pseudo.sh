@@ -29,7 +29,7 @@ set -eu
 here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$here/.."
 
-pot=po/filebase.pot
+pot=po/slipcase-query.pot
 out=po/en-x-pseudo.po
 
 # `msgen` fills every msgstr with its own msgid, which is the English

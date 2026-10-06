@@ -36,7 +36,7 @@ set -eu
 here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$here/.."
 
-domain=filebase
+domain=slipcase-query
 # **Inside the crate that reads them.** `include_str!` reaching above a crate's
 # own directory compiles and then fails in `cargo package`, which copies only
 # what is under the crate root: the tarball has no catalogue and the publish
@@ -74,7 +74,7 @@ xgettext \
     --add-comments=Translators: \
     --sort-by-file \
     --package-name="$domain" \
-    --msgid-bugs-address=https://github.com/excelano/filebase/issues \
+    --msgid-bugs-address=https://github.com/excelano/slipcase-query/issues \
     --output="$pot" \
     $sources
 
