@@ -45,7 +45,7 @@ pub struct Contents {
     ///
     /// Mutable because `flyleaf::render` takes it that way — it is one widget
     /// serving an editor and this — and nothing here writes it back.
-    /// `crate::policy::ReadOnly` is what stops the widget changing it at all.
+    /// `crate::READ_ONLY` is what stops the widget changing it at all.
     pub flyleaf: DocumentMut,
     /// The content file, as the card states it.
     pub content: ContentFile,

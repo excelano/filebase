@@ -49,7 +49,7 @@ slpc = { version = "0.4.0", features = ["fs"] }
 # behind; this crate has its own of each. Its `egui` is the one `eframe`
 # re-exports and its `toml_edit` is the one `slpc` re-exports, and both have to
 # be: this crate hands a `DocumentMut` from one to the other.
-flyleaf = { version = "0.2.7", default-features = false }
+flyleaf = { version = "0.2.8", default-features = false }
 # The language the window draws in, and the reader for the `.po` catalogues.
 # There are none yet — `po/` arrives with the German pass — and the call sites
 # are written through `t` from the first commit anyway, because wrapping every
@@ -58,6 +58,9 @@ flyleaf = { version = "0.2.7", default-features = false }
 potext = "0.1"
 # Defaults carry accesskit, which stays on.
 eframe = "0.36"
+# What the desktop says about light and dark, on the one platform where `winit`
+# does not say: it reads the XDG portal and follows it, and is empty elsewhere.
+portal-theme = "0.1"
 # Defaults are `xdg-portal` and `wayland`, both pure Rust. The `gtk3` feature
 # links C through gtk-sys and stays off, which is what taking the defaults
 # does — naming features here would be the way to turn it on by accident.
@@ -82,20 +85,6 @@ tempfile = "3.27"
 # icon is embedded as bytes and decoded at startup instead. Pure Rust; its `png`
 # is for the large entries, which are stored that way.
 ico = "0.5.0"
-
-[target.'cfg(target_os = "linux")'.dependencies]
-# What the desktop says about light and dark. `winit` answers this on the other
-# two platforms and returns a hardcoded `None` here, so egui falls back to dark
-# and no desktop setting reaches the window. `src/system_theme.rs` says what was
-# measured and where.
-#
-# The answer lives on D-Bus, in the XDG desktop portal. zbus is pure Rust with
-# no build script, and it is already compiled on this target under
-# `accesskit_unix`, which arrives through `egui-winit`; `blocking-api` is a
-# feature of that same crate and adds no crate to the tree. `default-features`
-# is off so that `async-io` is named rather than taken, which is what
-# `accesskit` already turns on.
-zbus = { version = "5", default-features = false, features = ["async-io", "blocking-api"] }
 
 # A Mac App Store submission was refused on 2026-08-31 under Guideline 2.5.1 for
 # referencing `_CGSSetWindowBackgroundBlurRadius`, a private CoreGraphics symbol

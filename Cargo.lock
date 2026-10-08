@@ -1078,9 +1078,9 @@ dependencies = [
 
 [[package]]
 name = "flyleaf"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92fbda24b9ff62ee32cca62fe2170f9c0d021568eafc6602a763b31c7074e0cd"
+checksum = "eed31faf58e732d6944ee32e564c741fae1cd524d37b3ce4a0f7258978927ec6"
 dependencies = [
  "egui",
  "flyleaf-core",
@@ -1089,9 +1089,9 @@ dependencies = [
 
 [[package]]
 name = "flyleaf-core"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d8165bce3ec113deada48cf74ac09cf9be1a2287219647faa994d07e3b41f0c"
+checksum = "eaca80ed4e8c99208685cbcbc7bfb5b286146cab150bc77f45f64565374f6535"
 dependencies = [
  "objc2 0.6.5",
  "objc2-foundation 0.3.2",
@@ -2508,6 +2508,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "portal-theme"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eeac9d787d286910ede9ea97a4cc5d454b3709bf2be30f69eb1bf557b7f752fb"
+dependencies = [
+ "egui",
+ "zbus",
+]
+
+[[package]]
 name = "potential_utf"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2907,12 +2917,12 @@ dependencies = [
  "flyleaf",
  "ico",
  "opener",
+ "portal-theme",
  "potext",
  "rfd",
  "slipql",
  "slpc",
  "tempfile",
- "zbus",
 ]
 
 [[package]]

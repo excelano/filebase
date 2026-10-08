@@ -19,12 +19,6 @@
 // that is where a panic message still has somewhere to go.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// Which way the desktop's light and dark setting points. A module rather than a
-// few lines here because only one of the three platforms needs any of it, and
-// the one value that is a judgement rather than a reading wants somewhere to be
-// argued and tested.
-mod system_theme;
-
 use std::path::PathBuf;
 use std::sync::mpsc;
 
@@ -33,7 +27,7 @@ use eframe::egui;
 use slipcase_query::detail::Outcome;
 use slipcase_query::i18n::{fill, t};
 use slipcase_query::query::{self, Run, Update};
-use slipcase_query::{Detail, ReadOnly};
+use slipcase_query::{Detail, READ_ONLY};
 
 /// Every language this application is translated into.
 ///
@@ -165,10 +159,7 @@ fn main() -> eframe::Result {
         "Slipcase Query",
         options,
         Box::new(move |cc| {
-            // Where the toolkit will not say whether the desktop is light or
-            // dark, ask the desktop. Empty on the two platforms where `winit`
-            // answers; on Linux it reads the portal and then follows it.
-            system_theme::follow(&cc.egui_ctx);
+            portal_theme::follow(&cc.egui_ctx);
 
             let mut app = App::new();
             if let Some(folder) = opened {
@@ -647,7 +638,7 @@ impl App {
                 // reading half of itself. There is no save under this pane and
                 // there is no path through this application that writes a
                 // container.
-                flyleaf::render(ui, &mut contents.flyleaf, &ReadOnly);
+                flyleaf::render(ui, &mut contents.flyleaf, &READ_ONLY);
             });
     }
 }
